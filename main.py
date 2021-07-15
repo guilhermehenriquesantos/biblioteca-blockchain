@@ -3,20 +3,29 @@ from minerador import Minerador
 
 
 SORTEADOR = random.randint(1, 100)
+MINERADORES = {}
+MINERADOR = {}
+
 
 if __name__ == '__main__':
-    # 60% de chance
-    if(SORTEADOR <= 60):
-        print(Minerador(random.randint(100000000000, 999999999999), random.randint(61, 100)))
-        
-    # 30% de chance
-    if(SORTEADOR > 60 and SORTEADOR <= 90):
-        print(Minerador(random.randint(100000000000, 999999999999), random.randint(21, 60)))
-        
-    # 10% de chance
-    if(SORTEADOR >= 90 and SORTEADOR <= 100):
-        print(Minerador(random.randint(100000000000, 999999999999), random.randint(1, 20)))
-        
-    if(SORTEADOR == 0):
-        print("Sem mineração")
-    
+
+    for candidatar in range(0, 50):
+        candidato_minerador = Minerador(random.randint(
+            100000000000, 999999999999), random.randint(1, 100))
+        MINERADORES[candidato_minerador.identificador] = candidato_minerador.poder_mineracao
+
+    maior_poder = 0
+
+    for identificador, poder_mineracao in MINERADORES.items():
+        if(poder_mineracao > maior_poder):
+            maior_poder = poder_mineracao
+
+    for identificador, poder_mineracao in MINERADORES.items():
+        if(poder_mineracao == maior_poder):
+            MINERADOR[identificador] = poder_mineracao
+
+    for identificador, poder_mineracao in MINERADOR.items():
+        print("-------------------------------------")
+        print("Minerador: " + str(identificador) +
+              "\t| Poder: " + str(poder_mineracao))
+        print("-------------------------------------")
