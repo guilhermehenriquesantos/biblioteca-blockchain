@@ -2,30 +2,33 @@ import random
 from minerador import Minerador
 
 
-SORTEADOR = random.randint(1, 100)
 MINERADORES = {}
-MINERADOR = {}
 
 
 if __name__ == '__main__':
-
-    for candidatar in range(0, 50):
-        candidato_minerador = Minerador(random.randint(
-            100000000000, 999999999999), random.randint(1, 100))
-        MINERADORES[candidato_minerador.identificador] = candidato_minerador.poder_mineracao
-
     maior_poder = 0
+    poder_mundial = 0
 
-    for identificador, poder_mineracao in MINERADORES.items():
-        if(poder_mineracao > maior_poder):
-            maior_poder = poder_mineracao
+    # Criando o array dos mineradores
+    for identificador in range(1, 51):
+        candidato_minerador = Minerador(identificador, random.randint(1, 100))
+        MINERADORES[candidato_minerador.identificador] = candidato_minerador
 
-    for identificador, poder_mineracao in MINERADORES.items():
-        if(poder_mineracao == maior_poder):
-            MINERADOR[identificador] = poder_mineracao
+    # Olhando o poder mundial
+    # Escolhendo o maior poder entre os mineradores
+    for identificador, minerador in MINERADORES.items():
+        poder_mundial = poder_mundial + minerador.poder_mineracao
 
-    for identificador, poder_mineracao in MINERADOR.items():
-        print("-------------------------------------")
-        print("Minerador: " + str(identificador) +
-              "\t| Poder: " + str(poder_mineracao))
-        print("-------------------------------------")
+        if(minerador.poder_mineracao > maior_poder):
+            maior_poder = minerador.poder_mineracao
+
+    print("\nO PODER DE MINERAÇÃO DO MUNDO É:", poder_mundial, "\n")
+    print("MINERADOR(ES) MAIS PODEROSO(S) DO MUNDO:")
+
+    # Definindo os mineradores com maior poder de mineração
+    for identificador, minerador in MINERADORES.items():
+        if(minerador.poder_mineracao == maior_poder):
+            print("-------------------------------------")
+            print("Minerador: " + str(identificador) +
+                  "\t|\tPoder: " + str(minerador.poder_mineracao))
+            print("-------------------------------------")
