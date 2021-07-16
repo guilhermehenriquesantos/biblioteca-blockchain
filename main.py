@@ -1,8 +1,11 @@
+import os
 import random
+
 from minerador import Minerador
 
 
 MINERADORES = {}
+PROBABILIDADE = random.randint(0, 100)
 
 
 def cria_dicionario_mineradores():
@@ -38,6 +41,10 @@ def escolhe_minerador_mais_poderoso():
 
 
 if __name__ == '__main__':
-    cria_dicionario_mineradores()
-    descobre_poder_mundial()
-    escolhe_minerador_mais_poderoso()
+    os.system('cls' if os.name == 'nt' else 'clear')
+    if (PROBABILIDADE > 10):
+        cria_dicionario_mineradores()
+        descobre_poder_mundial()
+        escolhe_minerador_mais_poderoso()
+    else:
+        print("\nNão foi possível ocorrer mineração!\n")
