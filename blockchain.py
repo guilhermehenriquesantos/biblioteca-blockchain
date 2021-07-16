@@ -9,7 +9,7 @@ class Blockchain:
         self.mecanismo_consenso = mecanismo_consenso
         
     
-    def criacao_bloco_inicial(self, dados_bloco):
+    def cria_bloco_inicial(self, dados_bloco):
         primeiro_bloco = Bloco(1, dados_bloco, "0000000000000000000000000000000000000000000000000000000000000000")
         primeiro_bloco = primeiro_bloco.minerar_bloco(1, dados_bloco, "0000000000000000000000000000000000000000000000000000000000000000", 4)
         return primeiro_bloco
