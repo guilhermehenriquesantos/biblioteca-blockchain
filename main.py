@@ -19,7 +19,6 @@ def descobre_poder_mundial():
     poder_mundial = 0
     for minerador in MINERADORES.values():
         poder_mundial = poder_mundial + minerador.poder_mineracao
-    # print("\nO PODER DE MINERAÇÃO DO MUNDO É:", poder_mundial, "\n")
 
     return poder_mundial
 
