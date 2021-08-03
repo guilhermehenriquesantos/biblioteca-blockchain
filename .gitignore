@@ -1,3 +1,5 @@
 exemplos-blockchain.code-workspace
 exemplo.py
 __pycache__/
+blockchain.csv
+mineradores.csv
