@@ -7,6 +7,16 @@ def incluir_bloco(bloco):
     BLOCKCHAIN[bloco.numero] = bloco
 
 
+def exibir_blockchain(blockchain):
+    if (len(blockchain) == 0):
+        print(
+            '>>>> Ainda não temos uma blockchain criada, crie ou importe a sua blockchain')
+    else:
+        for bloco in blockchain.keys():
+            print('>>>> Bloco: {}\t Dados: {}\t Hash do bloco anterior:{}\t Nonce: {}\t Hash deste bloco {}'.format(
+                bloco.numero, bloco.dados, bloco.hash_bloco_anterior, bloco.nonce, bloco.hash_deste_bloco))
+
+
 def exportar_blockchain():
     try:
         with open('blockchain.csv', 'w') as blockchain_arquivo:
