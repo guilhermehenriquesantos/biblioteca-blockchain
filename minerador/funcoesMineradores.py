@@ -3,7 +3,6 @@ import random
 from minerador.minerador import Minerador
 
 
-
 def incluir_minerador(dicionario_mineradores, candidato_minerador):
     dicionario_mineradores[candidato_minerador] = candidato_minerador.poder_mineracao
     return dicionario_mineradores
@@ -13,7 +12,8 @@ def criar_base_mineradores():
     dicionario_mineradores = {}
     for identificador in range(1, 51):
         candidato_minerador = Minerador(identificador, random.randint(1, 100))
-        dicionario_mineradores = incluir_minerador(dicionario_mineradores, candidato_minerador)
+        dicionario_mineradores = incluir_minerador(
+            dicionario_mineradores, candidato_minerador)
 
     return dicionario_mineradores
 
@@ -55,8 +55,18 @@ def atualizar_minerador(dicionario_mineradores, minerador_escolhido):
     for minerador in dicionario_mineradores.keys():
         if (minerador == minerador_escolhido):
             minerador.blocos_minerados += 1
-    
+
     exportar_mineradores(dicionario_mineradores)
+
+
+def exibir_mineradores(dicionario_mineradores):
+    if (len(dicionario_mineradores) == 0):
+        print(
+            '>>>> Ainda não temos nenhum minerador, crie ou importe sua base de mineração')
+    else:
+        for minerador in dicionario_mineradores.keys():
+            print('>>>> Minerador: {}\t Poder: {}\t Bloco Minerados: {}\t'.format(
+                minerador.identificador, minerador.poder_mineracao, minerador.blocos_minerados))
 
 
 def importar_mineradores():
@@ -74,7 +84,8 @@ def importar_mineradores():
                 candidato_minerador = Minerador(
                     identificador, poder_mineracao, blocos_minerados)
 
-                incluir_minerador(candidato_minerador)
+                dicionario_mineradores = incluir_minerador(
+                    dicionario_mineradores, candidato_minerador)
 
         return dicionario_mineradores
 
