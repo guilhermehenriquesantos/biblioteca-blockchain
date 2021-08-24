@@ -12,7 +12,7 @@ def limpar_tela():
     return os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def menu():
+def menu_blockchain():
     print('\n##########################################################')
     print('####################### BLOCKCHAIN #######################')
     print('##########################################################\n')
@@ -32,7 +32,7 @@ def menu():
 if __name__ == "__main__":
     limpar_tela()
     while True:
-        opcao_escolhida = menu()
+        opcao_escolhida = menu_blockchain()
 
         if (opcao_escolhida == '1'):
             limpar_tela()
