@@ -6,4 +6,4 @@ class Minerador:
         self.blocos_minerados = blocos_minerados
 
     def __str__(self):
-        return "{} é um minerador com poder de mineração ({}) | Já minerou {} blocos".format(self.identificador, self.poder_mineracao, self.blocos_minerados)
+        return '{} é um minerador com poder de mineração ({}) | Já minerou {} blocos'.format(self.identificador, self.poder_mineracao, self.blocos_minerados)

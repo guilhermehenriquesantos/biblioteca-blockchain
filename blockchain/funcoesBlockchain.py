@@ -16,7 +16,7 @@ def minerar_bloco(blockchain, bloco):
     prefixo_hash = '0'*quantidade_zeros_prefixo
 
     if (bloco.hash_bloco_anterior == None):
-        bloco.hash_bloco_anterior = "0000000000000000000000000000000000000000000000000000000000000000"
+        bloco.hash_bloco_anterior = '0000000000000000000000000000000000000000000000000000000000000000'
 
     for nonce in range(MAX_NONCE):
         infos_novo_bloco = str(bloco.numero) + bloco.dados + \

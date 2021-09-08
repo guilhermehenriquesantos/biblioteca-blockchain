@@ -68,7 +68,7 @@ def menu_blockchain():
     return escolha
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     limpar_tela()
     escolha_menu = ''
     opcao_escolhida = ''
@@ -157,7 +157,7 @@ if __name__ == "__main__":
                         hash_bloco_anterior = bloco.hash_deste_bloco
 
                     dados_novo_bloco = input(
-                        "\nDigite os dados para o novo bloco: ")
+                        '\nDigite os dados para o novo bloco: ')
 
                     novo_bloco = Bloco(numero_novo_bloco,
                                        dados_novo_bloco, hash_bloco_anterior)
