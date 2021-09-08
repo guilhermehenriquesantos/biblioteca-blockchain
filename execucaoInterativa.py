@@ -6,10 +6,6 @@ from blockchain.funcoesBlockchain import *
 from minerador.funcoesMineradores import *
 
 
-MINERADORES = {}
-BLOCKCHAIN = {}
-
-
 def limpar_tela():
     return os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -19,11 +15,10 @@ def menu_principal():
     print('####################### BLOCKCHAIN #######################')
     print('##########################################################\n')
     print('Olá, essa é uma aplicação com o intuito de simular uma blockchain e nela você poderá utilizar as opções abaixo:\n')
-    print('1 - Criar base de mineradores do zero')
-    print('2 - Importar base de mineradores existente')
-    print('3 - Exibir mineradores')
-    print('4 - Importar blockchain existente')
-    print('5 - Exibir blockchain existente')
+    print('1 - Criar base de mineradores')
+    print('2 - Exibir mineradores')
+    print('3 - Importar blockchain existente')
+    print('4 - Exibir blockchain existente')
     print('9 - Limpar tela')
     print('0 - Sair')
 
@@ -68,7 +63,10 @@ def menu_blockchain():
     return escolha
 
 
-if __name__ == '__main__':
+def execucao_intarativa():
+    MINERADORES = {}
+    BLOCKCHAIN = {}
+
     limpar_tela()
     escolha_menu = ''
     opcao_escolhida = ''
@@ -87,24 +85,18 @@ if __name__ == '__main__':
             print('\n>>>> Base de mineradores criada!\n')
             escolha_menu = 'Menu de operações'
 
-        elif (opcao_escolhida == '2'):
+        elif (opcao_escolhida == '2' or operacao_escolhida == '1'):
             limpar_tela()
-            MINERADORES = importar_mineradores()
             MINERADORES = ordenar_minerador_por_poder(
                 MINERADORES)
-            print('\n>>>> Base de mineradores importada!\n')
-            escolha_menu = 'Menu de operações'
-
-        elif (opcao_escolhida == '3' or operacao_escolhida == '1'):
-            limpar_tela()
             exibir_mineradores(MINERADORES)
 
-        elif (opcao_escolhida == '4' or operacao_escolhida == '5'):
+        elif (opcao_escolhida == '3' or operacao_escolhida == '5'):
             limpar_tela()
             BLOCKCHAIN = importar_blockchain()
             print('\n>>>> Blockchain importada com sucesso!\n')
 
-        elif (opcao_escolhida == '5' or operacao_escolhida == '6'):
+        elif (opcao_escolhida == '4' or operacao_escolhida == '6'):
             limpar_tela()
             exibir_blockchain(BLOCKCHAIN)
 

@@ -6,15 +6,14 @@ from blockchain.funcoesBlockchain import *
 from minerador.funcoesMineradores import *
 
 
-MINERADORES = {}
-BLOCKCHAIN = {}
-
-
 def limpar_tela():
     return os.system('cls' if os.name == 'nt' else 'clear')
 
 
-if __name__ == '__main__':
+def execucao_milhares_mineracoes():
+    MINERADORES = {}
+    BLOCKCHAIN = {}
+
     start = time.time()
 
     limpar_tela()

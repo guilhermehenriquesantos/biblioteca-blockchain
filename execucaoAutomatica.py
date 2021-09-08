@@ -6,15 +6,14 @@ from blockchain.funcoesBlockchain import *
 from minerador.funcoesMineradores import *
 
 
-MINERADORES = {}
-BLOCKCHAIN = {}
-
-
 def limpar_tela():
     return os.system('cls' if os.name == 'nt' else 'clear')
 
 
-if __name__ == '__main__':
+def execucao_automatica():
+    MINERADORES = {}
+    BLOCKCHAIN = {}
+
     limpar_tela()
 
     loop = 0
@@ -30,7 +29,7 @@ if __name__ == '__main__':
     sleep(1)
     limpar_tela()
 
-    while loop < 10:
+    while loop < 2:
         id = 0
         for minerador in MINERADORES.keys():
             if (int(minerador.identificador) > id):
