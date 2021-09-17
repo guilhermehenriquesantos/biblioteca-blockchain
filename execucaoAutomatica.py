@@ -35,12 +35,12 @@ def execucao_automatica():
             if (int(minerador.identificador) > id):
                 id = int(minerador.identificador)
 
-        print('########################################')
-        print('### Adicionando 50 novos mineradores ###')
-        print('########################################\n')
+        print('#######################################')
+        print('### Adicionando 2 novos mineradores ###')
+        print('#######################################\n')
         sleep(2)
 
-        for m in range(1, 51):
+        for m in range(1, 3):
             minerador_usuario = Minerador(str(id + 1), random.randint(1, 100))
             MINERADORES[minerador_usuario] = minerador_usuario.poder_mineracao
             print('>>>> Minerador {} de poder {} adicionado com sucesso!'.format(

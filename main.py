@@ -18,7 +18,7 @@ def menu_execucoes():
     print('Escolha a opção deseja:\n')
     print('1 - Executar processo de mineração automático e autoexplicativo')
     print('2 - Executar milhares de minerações automáticas')
-    print('3 - Interagir criando minha própria blockchain')
+    # print('3 - Interagir criando minha própria blockchain')
 
     escolha = input('\nSua opção: ')
 
@@ -33,8 +33,8 @@ if __name__=='__main__':
         execucao_automatica()
     elif (escolha_usuario == '2'):
         execucao_milhares_mineracoes()
-    elif (escolha_usuario == '3'):
-        execucao_intarativa()
+    # elif (escolha_usuario == '3'):
+    #     execucao_intarativa()
     else:
         limpar_tela()
         print('Escolha uma opção válida, saindo do programa...')

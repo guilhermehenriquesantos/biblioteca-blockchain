@@ -10,7 +10,7 @@ def incluir_minerador(dicionario_mineradores, candidato_minerador):
 
 def criar_base_mineradores():
     dicionario_mineradores = {}
-    for identificador in range(1, 51):
+    for identificador in range(1, 31):
         candidato_minerador = Minerador(identificador, random.randint(1, 100))
         dicionario_mineradores = incluir_minerador(
             dicionario_mineradores, candidato_minerador)
@@ -37,18 +37,13 @@ def descobrir_poder_mundial(dicionario_mineradores):
 def escolher_minerador(dicionario_mineradores, poder_mundial):
     loteria = random.randint(1, 10*poder_mundial)
     acumulado = 0
-    maior_poder_minerador = 0
-    minerador_final = None
 
     for minerador in dicionario_mineradores.keys():
         acumulado = acumulado + minerador.poder_mineracao
         if (loteria < acumulado):
-            if (minerador.poder_mineracao > maior_poder_minerador):
-                maior_poder_minerador = minerador.poder_mineracao
-                minerador_final = minerador
+            atualizar_minerador(dicionario_mineradores, minerador)
 
-    atualizar_minerador(dicionario_mineradores, minerador_final)
-    return minerador_final
+            return minerador
 
 
 def atualizar_minerador(dicionario_mineradores, minerador_escolhido):

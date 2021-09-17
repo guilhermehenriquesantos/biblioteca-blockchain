@@ -18,27 +18,16 @@ def execucao_milhares_mineracoes():
 
     limpar_tela()
 
-    print('#####################################################')
-    print('### Executando milhares de minerações, aguarde... ###')
-    print('########### Tempo estimado: 12 minutos ##############')
-    print('#####################################################\n')
+    print('################################################')
+    print('### Executando 10K de minerações, aguarde... ###')
+    print('################################################\n')
 
     loop = 0
     quantidade_blocos_inseridos = 0
 
     MINERADORES = criar_base_mineradores()
 
-    while loop < 1000:
-        id = 0
-        for minerador in MINERADORES.keys():
-            if (int(minerador.identificador) > id):
-                id = int(minerador.identificador)
-
-        for m in range(1, 51):
-            minerador_usuario = Minerador(str(id + 1), random.randint(1, 100))
-            MINERADORES[minerador_usuario] = minerador_usuario.poder_mineracao
-            id += 1
-
+    while loop < 10000:
         MINERADORES = ordenar_minerador_por_poder(
             MINERADORES)
 
