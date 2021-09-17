@@ -34,7 +34,7 @@ if __name__=='__main__':
     elif (escolha_usuario == '2'):
         execucao_milhares_mineracoes()
     # elif (escolha_usuario == '3'):
-    #     execucao_intarativa()
+    #     execucao_interativa()
     else:
         limpar_tela()
         print('Escolha uma opção válida, saindo do programa...')

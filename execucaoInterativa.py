@@ -63,7 +63,7 @@ def menu_blockchain():
     return escolha
 
 
-def execucao_intarativa():
+def execucao_interativa():
     MINERADORES = {}
     BLOCKCHAIN = {}
 

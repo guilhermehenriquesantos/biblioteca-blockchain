@@ -11,25 +11,25 @@ def limpar_tela():
 
 
 def execucao_milhares_mineracoes():
+    start = time.time()
+
     MINERADORES = {}
     BLOCKCHAIN = {}
-
-    start = time.time()
 
     limpar_tela()
 
     print('################################################')
-    print('### Executando 10K de minerações, aguarde... ###')
+    print('### Executando 10K de minerações, aguarde...')
+    print('### Tempo estimado: 32 minutos')
     print('################################################\n')
 
-    loop = 0
     quantidade_blocos_inseridos = 0
 
     MINERADORES = criar_base_mineradores()
+    MINERADORES = ordenar_minerador_por_poder(
+        MINERADORES)
 
-    while loop < 10000:
-        MINERADORES = ordenar_minerador_por_poder(
-            MINERADORES)
+    for loop in range(10000):
 
         poder_mundial = descobrir_poder_mundial(MINERADORES)
 
@@ -53,27 +53,34 @@ def execucao_milhares_mineracoes():
             hash_bloco_anterior = bloco.hash_deste_bloco
 
         quantidade_blocos_inseridos = quantidade_blocos_inseridos + 1
-        dados_novo_bloco = 'Dado do bloco ' + str(quantidade_blocos_inseridos)
+        dados_novo_bloco = 'Dados do bloco ' + str(quantidade_blocos_inseridos)
 
         novo_bloco = Bloco(numero_novo_bloco,
                            dados_novo_bloco, hash_bloco_anterior)
         BLOCKCHAIN = minerar_bloco(BLOCKCHAIN, novo_bloco)
 
-        loop += 1
-
     exportar_blockchain(BLOCKCHAIN)
     exportar_mineradores(MINERADORES)
     limpar_tela()
 
-    total_time = str((time.time() - start))
+    total_time = (time.time() - start)
 
     print('##########################')
     print('### Execução concluída ###')
     print('##########################\n')
 
-    print('########################################################')
-    print('### Tempo total gasto de: {} segundos'.format(total_time))
-    print('########################################################\n')
+    if (total_time >= 60):
+        total_time = total_time/60
+
+        print('########################################################')
+        print('### Tempo total gasto de: {:.2f} minutos'.format(total_time))
+        print('########################################################\n')
+
+    else:
+
+        print('########################################################')
+        print('### Tempo total gasto de: {:.2f} segundos'.format(total_time))
+        print('########################################################\n')
 
     print(
         '>>>> A blockchain criada pode ser encontrada no arquivo [blockchain.csv] deste mesmo diretório')
