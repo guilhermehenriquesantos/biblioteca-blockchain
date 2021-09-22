@@ -109,9 +109,9 @@ def exibir_mineradores(dicionario_mineradores):
         print(
             '>>>> Ainda não temos nenhum minerador, crie ou importe sua base de mineração')
     else:
-        tabela = PrettyTable(["ID do Minerador",
-                              "Poder computacional",
-                              "Blocos Minerados"])
+        tabela = PrettyTable(['ID do Minerador',
+                              'Poder computacional',
+                              'Blocos Minerados'])
 
         for minerador in dicionario_mineradores.keys():
             tabela.add_row([minerador.identificador,
@@ -191,9 +191,9 @@ def gerar_tabela_mineradores_csv():
     try:
         mineradores = importar_mineradores()
 
-        tabela = PrettyTable(["ID do Minerador",
-                            "Poder computacional",
-                            "Blocos Minerados"])
+        tabela = PrettyTable(['ID do Minerador',
+                            'Poder computacional',
+                            'Blocos Minerados'])
 
         for minerador in mineradores.keys():
             tabela.add_row([minerador.identificador,

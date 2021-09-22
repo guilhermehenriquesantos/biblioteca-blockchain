@@ -68,11 +68,11 @@ def exibir_blockchain(blockchain):
             '>>>> Ainda não temos uma blockchain criada, crie ou importe a sua blockchain')
 
     else:
-        tabela = PrettyTable(["Bloco",
-                              "Dados",
-                              "Hash bloco anterior",
-                              "Nonce",
-                              "Hash deste bloco"])
+        tabela = PrettyTable(['Bloco',
+                              'Dados',
+                              'Hash bloco anterior',
+                              'Nonce',
+                              'Hash deste bloco'])
 
         for bloco in blockchain.values():
             tabela.add_row([bloco.numero,
@@ -162,11 +162,11 @@ def gerar_tabela_blockchain_csv():
     try:
         blockchain = importar_blockchain()
 
-        tabela = PrettyTable(["Bloco",
-                            "Dados",
-                            "Hash bloco anterior",
-                            "Nonce",
-                            "Hash deste bloco"])
+        tabela = PrettyTable(['Bloco',
+                            'Dados',
+                            'Hash bloco anterior',
+                            'Nonce',
+                            'Hash deste bloco'])
 
         for bloco in blockchain.values():
             tabela.add_row([bloco.numero,
