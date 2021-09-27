@@ -160,14 +160,14 @@ def executar_mineracao_baseada_realidade():
 
     print('################################################')
     print('### Executando 10K de minerações, aguarde...')
-    print('### Tempo estimado: de 30 à 50 minutos')
+    print('### Tempo estimado: 30 minutos ou mais')
     print('################################################\n')
 
     mineradores = criar_base_mineradores()
     mineradores = ordenar_minerador_por_poder(mineradores)
     poder_mundial = descobrir_poder_mundial(mineradores)
 
-    for loop in range(100):
+    for loop in range(10000):
         minerador_escolhido = definir_minerador(mineradores,
                                                 poder_mundial)
 
@@ -223,3 +223,5 @@ def executar_mineracao_baseada_realidade():
         '>>>> A blockchain criada pode ser encontrada no arquivo [blockchain.csv] deste mesmo diretório')
     print(
         '>>>> O arquivo com os mineradores pode ser encontrado neste mesmo diretório, possui o nome de [mineradores.csv]')
+
+    gerar_tabela_mineradores_csv()

@@ -193,12 +193,16 @@ def gerar_tabela_mineradores_csv():
 
         tabela = PrettyTable(['ID do Minerador',
                             'Poder computacional',
-                            'Blocos Minerados'])
+                            'Blocos Minerados',
+                            'Razão (Blocos Minerados / Poder computacional)'])
 
         for minerador in mineradores.keys():
+            razao = (minerador.blocos_minerados // minerador.poder_mineracao)
+
             tabela.add_row([minerador.identificador,
                             minerador.poder_mineracao,
-                            minerador.blocos_minerados])
+                            minerador.blocos_minerados,
+                            razao])
 
         print(tabela)
 
