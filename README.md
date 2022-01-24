@@ -5,28 +5,33 @@ Simulação de um blockchain utilizando as tecnologias abaixo:
 ![Python Badge](https://img.shields.io/badge/python-3.9-blue?style=flat-square&logo=python&logoColor=white)
 ![Blockchain Badge](https://img.shields.io/badge/blockchain-grey?style=flat-square&logo=blockchain.com&logoColor=white)
 
-## Funcionalidade até o momento
+## Funcionalidades para consenso
 
-### Para mineradores:
+### Nos mineradores
 
-- Criar uma base de mineradores;
-- Incluir um ou mais novos mineradores na base;
-- Ordenar um minerador por seu poder;
-- Descobrir o poder mundial de mineração;
-- Escolher o minerador que irá minerar o novo bloco;
-- Atualizar o número de blocos minerados do minerador que foi escolhido;
-- Exibir mineradores;
-- Criar tabela de mineradores a partir de um arquivo CSV;
-- Exportar mineradores para um arquivo CSV de nome **`mineradores.csv`**;
-- Importar mineradores de um arquivo CSV de nome **`mineradores.csv`**.
+1. Criar uma base de mineradores;
+2. Incluir um ou mais novos mineradores na base;
+3. Ordenar um minerador por seu poder;
+4. Definir os vizinhos de cada minerador;
+5. Descobrir o poder mundial de mineração da base criada;
+6. Atualizar os mineradores em relação aos blocos inseridos na blockchain;
+7. Difundir a blockchain entre os mineradores;
+8. Escolher o minerador que irá minerar o novo bloco;
+9. Exibir os mineradores;
+10. Exportar mineradores para um arquivo CSV de nome **`mineradores.csv`**;
+11. Importar mineradores de um arquivo CSV de nome **`mineradores.csv`**;
+12. Criar tabela de mineradores a partir de um arquivo CSV.
 
-### Para a blockchain:
+### Na blockchain
 
-- Minerar um novo bloco fazendo referência ao bloco anterior (consegue diferenciar quando é inserido o primeiro bloco na blockchain);
-- Inclui o bloco minerado na blockchain;
-- Exibe a blockchain;
-- Importa a blockchain de um arquivo CSV de nome **`blockchain.csv`**;
-- Exporta a blockchain para um arquivo CSV de nome **`blockchain.csv`**.
+1. Minerar um novo bloco fazendo referência ao bloco anterior (consegue diferenciar quando é inserido o primeiro bloco na blockchain);
+2. Inclui o bloco minerado na blockchain;
+3. Exibir a blockchain;
+4. Importar a blockchain de um arquivo CSV de nome **`blockchain.csv`**;
+5. Exportar a blockchain para um arquivo CSV de nome **`blockchain.csv`**;
+6. Buscar um bloco na blockchain por meio de seu hash;
+7. Buscar um determinado bloco por meio da altura que a blockchain se encontrava em sua inserção;
+8. Criar uma tabela da blockchain a partir de um arquivo CSV.
 
 ## Execução
 
