@@ -4,6 +4,181 @@ from prettytable import PrettyTable
 
 
 '''
+* MÉTODOS ORDENADOS EM ORDEM ALFABÉTICA DE BLOCKCHAIN:
+* 1 - buscar_bloco_altura
+* 2 - buscar_bloco_hash
+* 3 - exibir_blockchain
+* 4 - exportar_blockchain
+* 5 - gerar_tabela_blockchain_csv
+* 6 - importar_blockchain
+* 7 - incluir_bloco
+* 8 - minerar_bloco
+'''
+
+
+'''
+* Nome: buscar_bloco_altura
+* Parâmetros:   blockchain = dicionário que representará a Blockchain
+*               bloco_procurado = informações referentes ao bloco procurado
+* Objetivo: verificar se um bloco se encontra na blockchain com base na altura que esse bloco foi inserido
+* Retorno: as informações do bloco caso encontrado ou uma exceção caso não seja encontrado
+*
+'''
+def buscar_bloco_altura(blockchain, bloco_procurado):
+    try:
+        for altura, bloco in blockchain.items():
+            if (altura == bloco_procurado.numero):
+                return bloco
+
+    except Exception as error:
+        print('O bloco {} não pertence a blockchain'.format(
+            bloco_procurado.hash_deste_bloco))
+
+
+'''
+* Nome: buscar_bloco_hash
+* Parâmetros:   blockchain = dicionário que representará a Blockchain
+*               bloco_procurado = informações referentes ao bloco procurado
+* Objetivo: verificar se um bloco se encontra na blockchain com base na informação do seu hash
+* Retorno: as informações do bloco caso encontrado ou uma exceção caso não seja encontrado
+*
+'''
+def buscar_bloco_hash(blockchain, bloco_procurado):
+    try:
+        for altura, bloco in blockchain.items():
+            if (bloco_procurado.hash_deste_bloco == bloco.hash_deste_bloco):
+                return bloco
+
+    except Exception as error:
+        print('O bloco {} não pertence a blockchain'.format(
+            bloco_procurado.hash_deste_bloco))
+
+
+'''
+* Nome: exibir_blockchain
+* Parâmetros: blockchain = dicionário que representará a Blockchain
+* Objetivo: mostra na tela do usuário a blockchain existente no momento caso ela exista
+*
+'''
+def exibir_blockchain(blockchain):
+    if (len(blockchain) == 0):
+        print(
+            '>>>> Ainda não temos uma blockchain criada, crie ou importe a sua blockchain')
+
+    else:
+        tabela = PrettyTable(['Bloco',
+                              'Dados',
+                              'Hash bloco anterior',
+                              'Nonce',
+                              'Hash deste bloco'])
+
+        for bloco in blockchain.values():
+            tabela.add_row([bloco.numero,
+                            bloco.dados,
+                            bloco.hash_bloco_anterior,
+                            bloco.nonce,
+                            bloco.hash_deste_bloco])
+
+        print(tabela)
+
+
+'''
+* Nome: exportar_blockchain
+* Parâmetros: blockchain = dicionário que representará a Blockchain
+* Objetivo: exportar para um arquivo csv os dados referentes à blockchain criada no momento
+*
+'''
+def exportar_blockchain(blockchain):
+    try:
+        with open('blockchain.csv', 'w') as blockchain_arquivo:
+            for bloco in blockchain.values():
+                numero_bloco = bloco.numero
+                dados_bloco = bloco.dados
+                hash_bloco_anterior = bloco.hash_bloco_anterior
+                nonce = bloco.nonce
+                hash_deste_bloco = bloco.hash_deste_bloco
+
+                blockchain_arquivo.write('{},{},{},{},{}\n'.format(
+                    numero_bloco,
+                    dados_bloco,
+                    hash_bloco_anterior,
+                    nonce,
+                    hash_deste_bloco)
+                )
+
+    except Exception as error:
+        print('\nAlgum erro ocorreu ao exportar a blockchain\n', error)
+
+
+'''
+* Nome: gerar_tabela_blockchain_csv
+* Parâmetros: vazio
+* Objetivo: importar blockchain de um arquivo csv e exibí-la em formato de tabela
+*
+'''
+def gerar_tabela_blockchain_csv():
+    try:
+        blockchain = importar_blockchain()
+
+        tabela = PrettyTable(['Bloco',
+                              'Dados',
+                              'Hash bloco anterior',
+                              'Nonce',
+                              'Hash deste bloco'])
+
+        for bloco in blockchain.values():
+            tabela.add_row([bloco.numero,
+                            bloco.dados,
+                            bloco.hash_bloco_anterior,
+                            bloco.nonce,
+                            bloco.hash_deste_bloco])
+
+        print(tabela)
+    except Exception as error:
+        print('Não foi possível gerar uma tabela, o erro apontado foi: {}'.format(error))
+
+
+'''
+* Nome: importar_blockchain
+* Parâmetros: vazio
+* Objetivo: importar de um arquivo csv os dados referentes a uma blockchain criada anteriormente
+* Retorno: dicionário da blockchain - [key: número do bloco inserido | value: bloco inserido]
+*
+'''
+def importar_blockchain():
+    try:
+        blockchain = {}
+
+        with open('blockchain.csv', 'r') as blockchain_arquivo:
+            bloco = blockchain_arquivo.readlines()
+
+            for propriedades in bloco:
+                detalhes = propriedades.strip().split(',')
+
+                numero_bloco = detalhes[0]
+                dados_bloco = detalhes[1]
+                hash_bloco_anterior = detalhes[2]
+                nonce = detalhes[3]
+                hash_deste_bloco = detalhes[4]
+
+                numero_bloco = int(numero_bloco)
+                nonce = int(nonce)
+
+                bloco = Bloco(numero_bloco,
+                              dados_bloco,
+                              hash_bloco_anterior,
+                              nonce,
+                              hash_deste_bloco)
+
+                blockchain = incluir_bloco(blockchain, bloco)
+
+        return blockchain
+
+    except Exception as error:
+        print('\nAlgum erro ocorreu ao importar a blockchain\n', error)
+
+
+'''
 * Nome: incluir_bloco
 * Parâmetros:   blockchain = dicionário que representará a blockchain
 *               bloco = representação de um objeto Bloco
@@ -54,130 +229,6 @@ def minerar_bloco(blockchain, bloco):
 
     raise BaseException(
         '\nNão foi possível realizar a mineração. Foram feitas: {valor_maximo_nonce} de tentativas\n')
-
-
-'''
-* Nome: exibir_blockchain
-* Parâmetros: blockchain = dicionário que representará a Blockchain
-* Objetivo: mostra na tela do usuário a blockchain existente no momento caso ela exista
-*
-'''
-def exibir_blockchain(blockchain):
-    if (len(blockchain) == 0):
-        print(
-            '>>>> Ainda não temos uma blockchain criada, crie ou importe a sua blockchain')
-
-    else:
-        tabela = PrettyTable(['Bloco',
-                              'Dados',
-                              'Hash bloco anterior',
-                              'Nonce',
-                              'Hash deste bloco'])
-
-        for bloco in blockchain.values():
-            tabela.add_row([bloco.numero,
-                            bloco.dados,
-                            bloco.hash_bloco_anterior,
-                            bloco.nonce,
-                            bloco.hash_deste_bloco])
-
-        print(tabela)
-
-
-'''
-* Nome: importar_blockchain
-* Parâmetros: vazio
-* Objetivo: importar de um arquivo csv os dados referentes a uma blockchain criada anteriormente
-* Retorno: dicionário da blockchain - [key: número do bloco inserido | value: bloco inserido]
-*
-'''
-def importar_blockchain():
-    try:
-        blockchain = {}
-
-        with open('blockchain.csv', 'r') as blockchain_arquivo:
-            bloco = blockchain_arquivo.readlines()
-
-            for propriedades in bloco:
-                detalhes = propriedades.strip().split(',')
-
-                numero_bloco = detalhes[0]
-                dados_bloco = detalhes[1]
-                hash_bloco_anterior = detalhes[2]
-                nonce = detalhes[3]
-                hash_deste_bloco = detalhes[4]
-
-                numero_bloco = int(numero_bloco)
-                nonce = int(nonce)
-
-                bloco = Bloco(numero_bloco,
-                              dados_bloco,
-                              hash_bloco_anterior,
-                              nonce,
-                              hash_deste_bloco)
-
-                blockchain = incluir_bloco(blockchain, bloco)
-
-        return blockchain
-
-    except Exception as error:
-        print('\nAlgum erro ocorreu ao importar a blockchain\n', error)
-
-
-'''
-* Nome: exportar_blockchain
-* Parâmetros: blockchain = dicionário que representará a Blockchain
-* Objetivo: exportar para um arquivo csv os dados referentes à blockchain criada no momento
-*
-'''
-def exportar_blockchain(blockchain):
-    try:
-        with open('blockchain.csv', 'w') as blockchain_arquivo:
-            for bloco in blockchain.values():
-                numero_bloco = bloco.numero
-                dados_bloco = bloco.dados
-                hash_bloco_anterior = bloco.hash_bloco_anterior
-                nonce = bloco.nonce
-                hash_deste_bloco = bloco.hash_deste_bloco
-
-                blockchain_arquivo.write('{},{},{},{},{}\n'.format(
-                    numero_bloco,
-                    dados_bloco,
-                    hash_bloco_anterior,
-                    nonce,
-                    hash_deste_bloco)
-                )
-
-    except Exception as error:
-        print('\nAlgum erro ocorreu ao exportar a blockchain\n', error)
-
-
-'''
-* Nome: gerar_tabela_blockchain_csv
-* Parâmetros: vazio
-* Objetivo: importar blockchain de um arquivo csv e exibí-la em formato de tabela
-*
-'''
-def gerar_tabela_blockchain_csv():
-    try:
-        blockchain = importar_blockchain()
-
-        tabela = PrettyTable(['Bloco',
-                            'Dados',
-                            'Hash bloco anterior',
-                            'Nonce',
-                            'Hash deste bloco'])
-
-        for bloco in blockchain.values():
-            tabela.add_row([bloco.numero,
-                            bloco.dados,
-                            bloco.hash_bloco_anterior,
-                            bloco.nonce,
-                            bloco.hash_deste_bloco])
-
-        print(tabela)
-    except Exception as error:
-        print('Não foi possível gerar uma tabela, o erro apontado foi: {}'.format(error))
 
 
 '''
