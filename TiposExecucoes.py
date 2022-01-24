@@ -9,9 +9,7 @@ from conveniencias.Funcoes import *
 '''
 * Nome: executar_mineracao_explicativa
 * Parâmetros: vazio
-* Objetivo: explicar o passo a passo que ocorre no processo de mineração de um bloco na blockchain, em que é criada uma base de mineradores e dentre esses mineradores é escolhido um para minerar o próximo bloco a ser inserido na blockchain.
-*           O processo de mineração é feito e o novo bloco é inserido na blockchain.
-*           Após a execução de todos os processos, os arquivos referentes à blockchain e aos mineradores são exportados para o formato CSV em que o usuário pode verificar os dados.
+* Objetivo: explicar o passo a passo que ocorre no processo de mineração de um bloco na blockchain com consenso. É criada uma base de mineradores, defini-se quem são os vizinhos de cada minerador e dentre todos os mineradores é escolhido um para minerar o próximo bloco a ser inserido na blockchain, após minerá-lo, esse minerador irá difundir esse novo bloco na blockchain e irá passar essa informação para seus vizinhos. Se for de acordo com eles, os vizinhos irão receber a nova blockchain informada, caso constrário, nenhum deles irá receber a nova blockchain
 *
 '''
 def executar_mineracao_explicativa():
@@ -28,31 +26,12 @@ def executar_mineracao_explicativa():
     print('### Criando base de mineradores ###')
     print('###################################\n')
     sleep(2)
-    base_mineradores = criar_base_mineradores()
-    print('>>>> Base de mineradores criada!\n')
-    sleep(1)
+    base_mineradores = criar_base_mineradores(31)
+    print('>>>> Base de mineradores criada, com vizinhos já definidos!\n')
+    sleep(2)
     limpar_tela()
 
     for loop in range(2):
-        print('########################################################################')
-        print('### Adicionando 2 novos mineradores na base criada no passo anterior ###')
-        print('########################################################################\n')
-        sleep(2)
-
-        for minerador in base_mineradores.keys():
-            if (int(minerador.identificador) > id):
-                id = int(minerador.identificador)
-
-        for m in range(1, 3):
-            minerador_usuario = Minerador(str(id + 1),
-                                          random.randint(1, 100))
-            base_mineradores[minerador_usuario] = minerador_usuario.poder_mineracao
-            print('>>>> Minerador {} de poder {} adicionado com sucesso!'.format(minerador_usuario.identificador,
-                                                                                 minerador_usuario.poder_mineracao))
-            id = id + 1
-            sleep(1)
-
-        limpar_tela()
         print('#####################################')
         print('### Exibindo todos os mineradores ###')
         print('#####################################\n')
@@ -104,10 +83,18 @@ def executar_mineracao_explicativa():
 
         blockchain = minerar_bloco(blockchain, novo_bloco)
 
-        print('\n>>>> O bloco {} foi inserido na blockchain\n'.format(
+        print('\n>>>> O bloco {} foi inserido na blockchain do minerador\n'.format(
             novo_bloco.numero))
         sleep(2)
         limpar_tela()
+
+        print('###########################################################')
+        print('### Informando aos demais mineradores do bloco inserido ###')
+        print('###########################################################\n')
+        sleep(3)
+        limpar_tela()
+        bloco_inserido = buscar_bloco_altura(blockchain, novo_bloco)
+        base_mineradores = atualizar_mineradores(base_mineradores, minerador_escolhido, bloco_inserido.hash_deste_bloco, blockchain)
 
         print('###########################')
         print('### Exibindo blockchain ###')
@@ -115,6 +102,15 @@ def executar_mineracao_explicativa():
         sleep(2)
 
         exibir_blockchain(blockchain)
+        sleep(5)
+        limpar_tela()
+
+        print('############################')
+        print('### Exibindo mineradores ###')
+        print('############################\n')
+        sleep(2)
+
+        exibir_mineradores(base_mineradores)
         sleep(5)
         limpar_tela()
 
@@ -163,7 +159,7 @@ def executar_mineracao_baseada_realidade():
     print('### Tempo estimado: 30 minutos ou mais')
     print('################################################\n')
 
-    mineradores = criar_base_mineradores()
+    mineradores = criar_base_mineradores(31)
     mineradores = ordenar_minerador_por_poder(mineradores)
     poder_mundial = descobrir_poder_mundial(mineradores)
 
@@ -194,6 +190,9 @@ def executar_mineracao_baseada_realidade():
 
         blockchain = minerar_bloco(blockchain,
                                    novo_bloco)
+
+        bloco_inserido = buscar_bloco_altura(blockchain, novo_bloco)
+        mineradores = atualizar_mineradores(mineradores, minerador_escolhido, bloco_inserido.hash_deste_bloco, blockchain)
 
     exportar_blockchain(blockchain)
     exportar_mineradores(mineradores)
