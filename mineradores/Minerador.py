@@ -77,7 +77,7 @@ def criar_base_mineradores(quantidade_mineradores):
 *
 '''
 def definir_minerador(dicionario_mineradores, poder_mundial):
-    loteria = random.randint(1, 10*poder_mundial)
+    loteria = random.randint(1, 10*poder_mundial) # IVAN: parametrizar o 10 para facilitar os testes
     acumulado = 0
 
     for minerador in dicionario_mineradores.keys():
@@ -152,6 +152,11 @@ def descobrir_poder_mundial(dicionario_mineradores):
 * Retorno: dicionário de mineradores com a nova blockchain difusa entre eles
 *
 '''
+
+#IVAN: esta funcao NAO pode ser recursiva!!!! Da forma que esta a blockchain se propaga imediatamente!!!
+# Cda minerador deve ter um flag "precisoPropagar"
+# este flag  ligado ao minerar ou receber um blockchain
+# ao propagar para os vizinhos desligue este flag
 def difundir_blockchain_recursivamente(minerador, receberam_blockchain_atualizada, dicionario_mineradores):
     for vizinho in minerador.vizinhos:
         if (vizinho.identificador not in receberam_blockchain_atualizada):
