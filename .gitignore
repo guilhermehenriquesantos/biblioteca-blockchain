@@ -1,8 +1,8 @@
-exemplos-blockchain.code-workspace
-exemplo.py
 __pycache__/
+bases_exemplos/
+
+.vscode/
+
 blockchain.csv
 mineradores.csv
 tarefas.md
-bases_exemplos/
-.vscode/
