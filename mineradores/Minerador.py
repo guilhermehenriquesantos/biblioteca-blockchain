@@ -3,7 +3,7 @@ import copy
 
 from prettytable import PrettyTable
 
-from blockchain.Blockchain import importar_blockchain
+from blockchain.Blockchain import *
 
 
 '''
@@ -13,36 +13,40 @@ from blockchain.Blockchain import importar_blockchain
 * 3 - definir_minerador
 * 4 - definir_vizinhos
 * 5 - descobrir_poder_mundial
-* 6 - difundir_blockchain_recursivamente
-* 7 - exibir_mineradores
-* 8 - exportar_mineradores
-* 9 - gerar_tabela_mineradores_csv
-* 10 - importar_mineradores
-* 11 - incluir_minerador
-* 12 - ordenar_minerador_por_poder
+* 6 - exibir_mineradores
+* 7 - exportar_mineradores
+* 8 - gerar_tabela_mineradores_csv
+* 9 - importar_mineradores
+* 10 - incluir_minerador
+* 11 - ordenar_minerador_por_poder
+* 12 - processar_mineracao_bifurcada
+* 13 - processar_mineracao_simples
 '''
 
 
 '''
 * Nome: atualizar_mineradores
 * Parâmetros:   dicionario_mineradores = dicionário que representára a base de mineradores existente
-                minerador_escolhido = objeto referente ao minerador que conseguiu obter um acumulado maior do que a loteria
-                hash_bloco = hash do bloco que o minerador minerou
-                blockchain = recebe a blockchain completa com seu bloco inserido
-* Objetivo: atualizar as informações do minerador que minerar um novo bloco na blockchain e solicitar que ele espalhe a sua atualização para os seus vizinhos que vão espalhar para os vizinhos deles.
+                minerador_selecionado = objeto referente ao minerador que conseguiu obter um acumulado maior do que a loteria
+                caso_de_bifurcacao = parâmetro opcional, em casos de bifurcação (fork) ele recebe o identificador do minerador "concorrente", para que caso esse minerador seja vizinho dele, não sobrescreva sua blockchain
+* Objetivo: atualizar a blockchain do minerador selecionado no dicionário de mineradores principal e espalhar a blockchain minerada com o histórico de mineradores do minerador selecionado para todos os seus vizinhos que não sejam o seu concorrente na mineração do novo bloco (em caso de fork)
+* Retorno: dicionário de mineradores atualizado
 *
 '''
-def atualizar_mineradores(dicionario_mineradores, minerador_escolhido, hash_bloco, blockchain):
+def atualizar_mineradores(dicionario_mineradores, minerador_selecionado, caso_de_bifurcacao=0):
+    for vizinho in minerador_selecionado.vizinhos:
+        if ((len(vizinho.blockchain) < len(minerador_selecionado.blockchain)) and (vizinho.identificador != caso_de_bifurcacao)):
+            vizinho.blockchain = minerador_selecionado.blockchain.copy()
+            vizinho.historico_mineradores = minerador_selecionado.historico_mineradores.copy()
+
     for minerador in dicionario_mineradores.keys():
-        if (minerador == minerador_escolhido):
-            receberam_blockchain_atualizada = []
-
-            minerador.blocos_minerados.append(hash_bloco)
-            minerador.blockchain = blockchain
-
-            receberam_blockchain_atualizada.append(minerador.identificador)
-            dicionario_mineradores = difundir_blockchain_recursivamente(
-                minerador, receberam_blockchain_atualizada, dicionario_mineradores)
+        if (minerador.identificador == minerador_selecionado.identificador):
+            minerador = minerador_selecionado
+        else:
+            for vizinho in minerador_selecionado.vizinhos:
+                if ((vizinho.identificador == minerador.identificador and len(vizinho.blockchain) > len(minerador.blockchain)) and (vizinho.identificador != caso_de_bifurcacao)):
+                    minerador.blockchain = vizinho.blockchain
+                    minerador.historico_mineradores = vizinho.historico_mineradores.copy()
 
     return dicionario_mineradores
 
@@ -76,8 +80,8 @@ def criar_base_mineradores(quantidade_mineradores):
 * Retorno: o minerador escolhido para minerar o novo bloco
 *
 '''
-def definir_minerador(dicionario_mineradores, poder_mundial):
-    loteria = random.randint(1, 10*poder_mundial) # IVAN: parametrizar o 10 para facilitar os testes
+def definir_minerador(dicionario_mineradores, poder_mundial, multiplicador):
+    loteria = random.randint(1, multiplicador*poder_mundial)
     acumulado = 0
 
     for minerador in dicionario_mineradores.keys():
@@ -144,40 +148,6 @@ def descobrir_poder_mundial(dicionario_mineradores):
 
 
 '''
-* Nome: difundir_blockchain_recursivamente
-* Parâmetros:   minerador = minerador que realizou a mineração para inserção de um novo bloco na blockchain;
-                receberam_blockchain_atualizada = array com todos os mineradores que receberam a blockchain com o novo bloco já inserido caso não haja nenhum problema;
-                dicionario_mineradores = dicionário com os mineradores sem a blockchain atualizada com o bloco novo; 
-* Objetivo: atualizar todos os mineradores da blockchain com o novo bloco incluído a partir do minerador que o minerou. Esse método busca os vizinhos do minerador do bloco e informa para eles a nova blockchain e recursivamente cada um desses vizinhos vão informando os seus vizinhos da inserção de um novo bloco na blockchain caso não haja nenhuma incosistência (uma blockchain menor que a atual, uma blockchain diferente da atual, a mudança de um bloco anterior)
-* Retorno: dicionário de mineradores com a nova blockchain difusa entre eles
-*
-'''
-
-#IVAN: esta funcao NAO pode ser recursiva!!!! Da forma que esta a blockchain se propaga imediatamente!!!
-# Cda minerador deve ter um flag "precisoPropagar"
-# este flag  ligado ao minerar ou receber um blockchain
-# ao propagar para os vizinhos desligue este flag
-def difundir_blockchain_recursivamente(minerador, receberam_blockchain_atualizada, dicionario_mineradores):
-    for vizinho in minerador.vizinhos:
-        if (vizinho.identificador not in receberam_blockchain_atualizada):
-            if ((vizinho.blockchain == {} or vizinho.blockchain.items() <= minerador.blockchain.items()) and len(minerador.blockchain) > len(vizinho.blockchain)):
-                for minerador_desatualizado in dicionario_mineradores.keys():
-                    vizinho.blockchain = minerador.blockchain
-                    if (vizinho.identificador == minerador_desatualizado.identificador):
-                        minerador_desatualizado.blockchain = vizinho.blockchain
-                receberam_blockchain_atualizada.append(vizinho.identificador)
-                difundir_blockchain_recursivamente(
-                    vizinho, receberam_blockchain_atualizada, dicionario_mineradores)
-
-            else:
-                for mineradores in dicionario_mineradores.keys():
-                    if (minerador.identificador == mineradores.identificador):
-                        mineradores.blockchain = vizinho.blockchain
-
-    return dicionario_mineradores
-
-
-'''
 * Nome: exibir_mineradores
 * Parâmetros: dicionario_mineradores = dicionário que representára a base de mineradores existente
 * Objetivo: mostrar na tela do usuário os mineradores existentes e suas informações mais relevantes
@@ -217,10 +187,12 @@ def exportar_mineradores(dicionario_mineradores):
                 identificador = minerador.identificador
                 poder_mineracao = minerador.poder_mineracao
                 blocos_minerados = minerador.blocos_minerados
+                historico_mineradores = minerador.historico_mineradores
 
-                mineradores.write('{}|{}|{}\n'.format(identificador,
-                                                      poder_mineracao,
-                                                      blocos_minerados))
+                mineradores.write('{}|{}|{}|{}\n'.format(identificador,
+                                                         poder_mineracao,
+                                                         blocos_minerados,
+                                                         historico_mineradores))
 
     except Exception as error:
         print('\nAlgum erro ocorreu ao exportar os mineradores\n', error)
@@ -236,25 +208,33 @@ def gerar_tabela_mineradores_csv():
     try:
         mineradores = importar_mineradores()
 
-        tabela = PrettyTable(['1) ID do Minerador',
-                              '2) Poder computacional',
-                              '3) Blocos Minerados',
-                              '4) Razão [3) / 2)]',
-                              '5) Vizinhos do Minerador'])
+        tabela_vizinhos = PrettyTable(['1) ID do Minerador',
+                                       '2) Vizinhos do Minerador'])
 
         for minerador in mineradores.keys():
-            razao = (len(minerador.blocos_minerados) //
-                     minerador.poder_mineracao)
             vizinhos = []
 
             for vizinho in minerador.vizinhos:
                 vizinhos.append(vizinho.identificador)
 
+            tabela_vizinhos.add_row([minerador.identificador,
+                            vizinhos])
+
+        print(tabela_vizinhos)
+
+        tabela = PrettyTable(['1) ID do Minerador',
+                              '2) Poder computacional',
+                              '3) Blocos Minerados',
+                              '4) Razão [Blocos Minerados / Poder]'])
+
+        for minerador in mineradores.keys():
+            razao = (len(minerador.blocos_minerados) //
+                     minerador.poder_mineracao)
+
             tabela.add_row([minerador.identificador,
                             minerador.poder_mineracao,
                             len(minerador.blocos_minerados),
-                            razao,
-                            vizinhos])
+                            razao])
 
         print(tabela)
 
@@ -281,6 +261,7 @@ def importar_mineradores():
                 identificador = detalhes[0]
                 poder_mineracao = detalhes[1]
                 blocos_minerados = detalhes[2]
+                historico_mineradores = detalhes[3]
 
                 identificador = int(identificador)
                 poder_mineracao = int(poder_mineracao)
@@ -289,10 +270,19 @@ def importar_mineradores():
                 blocos_minerados = blocos_minerados.replace(']', '')
                 blocos_minerados = blocos_minerados.replace("'", '')
 
+                historico_mineradores = historico_mineradores.replace('[', '')
+                historico_mineradores = historico_mineradores.replace(']', '')
+                historico_mineradores = historico_mineradores.replace("'", '')
+
                 if (len(blocos_minerados) > 0):
                     blocos_minerados = blocos_minerados.split(', ')
                 else:
                     blocos_minerados = []
+
+                if (len(historico_mineradores) > 0):
+                    historico_mineradores = historico_mineradores.split(', ')
+                else:
+                    historico_mineradores = []
 
                 vizinhos = []
                 blockchain = importar_blockchain()
@@ -301,7 +291,8 @@ def importar_mineradores():
                                                 poder_mineracao,
                                                 blocos_minerados,
                                                 vizinhos,
-                                                blockchain)
+                                                blockchain,
+                                                historico_mineradores)
 
                 dicionario_mineradores = incluir_minerador(dicionario_mineradores,
                                                            candidato_minerador)
@@ -342,23 +333,121 @@ def ordenar_minerador_por_poder(dicionario_mineradores):
 
 
 '''
+* Nome: processar_mineracao_bifurcada
+* Parâmetros: mineradores_escolhidos = array contendo as informações dos mineradores que irão realizar o processo de mineração ao mesmo tempo de um mesmo bloco
+* Objetivo: cada minerador irá minerar um novo bloco idêntico e inserí-lo em suas blockchains, a diferença é que no histórico de mineradores cada um vai ter adicionado apenas o seu identificador como minerador do bloco e essa bifurcação somente será resolvida em uma próxima mineração
+* Retorno: array com os mineradores escolhidos para minerar atualizados com as respectivas informações de cada um
+*
+'''
+def processar_mineracao_bifurcada(mineradores_escolhidos):
+    quantidade_blocos_inseridos = 0
+    ultimo_bloco = 0
+    hash_bloco_anterior = None
+
+    blockchain_base = mineradores_escolhidos[0].blockchain.copy()
+    if (len(mineradores_escolhidos) > 1):
+        blockchain_secundaria = mineradores_escolhidos[1].blockchain.copy()
+
+        if (blockchain_base == blockchain_secundaria):
+            if (len(blockchain_base) > 0):
+                ultimo_bloco = max(blockchain_base.keys())
+
+            numero_novo_bloco = int(ultimo_bloco) + 1
+
+            if (numero_novo_bloco > 1):
+                bloco = blockchain_base.get(ultimo_bloco,
+                                            '>>> Bloco não encontrado')
+                hash_bloco_anterior = bloco.hash_deste_bloco
+
+            quantidade_blocos_inseridos = len(blockchain_base) + 1
+            dados_novo_bloco = 'Dados do bloco ' + \
+                str(quantidade_blocos_inseridos)
+
+            novo_bloco = Bloco(numero_novo_bloco,
+                               dados_novo_bloco,
+                               hash_bloco_anterior)
+
+            blockchain_base = minerar_bloco(blockchain_base,
+                                            novo_bloco)
+            bloco_inserido = buscar_bloco_altura(blockchain_base, novo_bloco)
+
+            mineradores_escolhidos[0].blockchain = blockchain_base
+            mineradores_escolhidos[1].blockchain = blockchain_base
+
+            mineradores_escolhidos[0].blocos_minerados.append(
+                bloco_inserido.hash_deste_bloco)
+            mineradores_escolhidos[1].blocos_minerados.append(
+                bloco_inserido.hash_deste_bloco)
+
+            mineradores_escolhidos[0].historico_mineradores.append(
+                mineradores_escolhidos[0].identificador)
+            mineradores_escolhidos[1].historico_mineradores.append(
+                mineradores_escolhidos[1].identificador)
+
+    return mineradores_escolhidos
+
+
+'''
+* Nome: processar_mineracao_simples
+* Parâmetros: minerador_escolhido = contém todos as informações sobre o minerador que irá realizar o processo de mineração
+* Objetivo: minerar um novo bloco e inserí-lo na blockchain do minerador selecionado para realizar o processo de mineração e atualizar seu histórico de mineradores com seu identificador
+* Retorno: minerador escolhido para minerar atualizado com as novas informações após a mineração de seu novo bloco
+*
+'''
+def processar_mineracao_simples(minerador_escolhido):
+    quantidade_blocos_inseridos = 0
+    ultimo_bloco = 0
+    hash_bloco_anterior = None
+
+    if (len(minerador_escolhido.blockchain) > 0):
+        ultimo_bloco = max(minerador_escolhido.blockchain.keys())
+
+    numero_novo_bloco = int(ultimo_bloco) + 1
+
+    if (numero_novo_bloco > 1):
+        bloco = minerador_escolhido.blockchain.get(ultimo_bloco,
+                                                   '>>> Bloco não encontrado')
+        hash_bloco_anterior = bloco.hash_deste_bloco
+
+    quantidade_blocos_inseridos = len(minerador_escolhido.blockchain) + 1
+    dados_novo_bloco = 'Dados do bloco ' + str(quantidade_blocos_inseridos)
+
+    novo_bloco = Bloco(numero_novo_bloco,
+                       dados_novo_bloco,
+                       hash_bloco_anterior)
+
+    minerador_escolhido.blockchain = minerar_bloco(minerador_escolhido.blockchain,
+                                                   novo_bloco)
+    bloco_inserido = buscar_bloco_altura(
+        minerador_escolhido.blockchain, novo_bloco)
+    minerador_escolhido.blocos_minerados.append(
+        bloco_inserido.hash_deste_bloco)
+    minerador_escolhido.historico_mineradores.append(
+        minerador_escolhido.identificador)
+
+    return minerador_escolhido
+
+
+'''
 * Classe: Minerador
 * Parâmetros:   identificador = número único que representará o minerador
 *               poder_mineracao = poder computacional de um minerador para minerar um bloco
 *               blocos_minerados = hashes dos blocos que o minerador minerou
 *               vizinhos = mineradores vizinhos ao minerador, a quem ele passa as informações dos seus blocos minerados
 *               blockchain = última versão de blockchain recebida
+*               historico_mineradores = contém a histórico de quem minerou cada bloco na blockchain de forma ordenada
 * Objetivo: representar um objeto Minerador
 *
 '''
 class Minerador:
 
-    def __init__(self, identificador, poder_mineracao, blocos_minerados=[], vizinhos=[], blockchain={}):
+    def __init__(self, identificador, poder_mineracao, blocos_minerados=[], vizinhos=[], blockchain={}, historico_mineradores=[]):
         self.identificador = identificador
         self.poder_mineracao = poder_mineracao
         self.blocos_minerados = blocos_minerados
         self.vizinhos = vizinhos
         self.blockchain = blockchain
+        self.historico_mineradores = historico_mineradores
 
     def __str__(self):
         if (len(self.blocos_minerados) < 1):
