@@ -76,7 +76,8 @@ def criar_base_mineradores(quantidade_mineradores):
 * Nome: definir_minerador
 * Parâmetros:   dicionario_mineradores = dicionário que representára a base de mineradores existente
                 poder_mundial = valor referente ao poder de todos os mineradores somados
-* Objetivo: criar um sorteio para escolher um minerador, neste sorteio tem-se uma loteria que é um valor aletório de 1 até 10 vezes o poder computacional de todos os mineradores somados. O intuito é de quanto maior for o poder computacional do minerador, maior a sua chance de minerar um novo bloco
+                multiplicador = valor referência para escolher a loteria
+* Objetivo: criar um sorteio para escolher um minerador, neste sorteio tem-se uma loteria que é um valor aletório de 1 até multiplicador vezes o poder computacional de todos os mineradores somados. O intuito é de quanto maior for o poder computacional do minerador, maior a sua chance de minerar um novo bloco
 * Retorno: o minerador escolhido para minerar o novo bloco
 *
 '''
