@@ -459,3 +459,18 @@ class Minerador:
                                                                                                                                        self.poder_mineracao,
                                                                                                                                        quantidade_blocos_minerados,
                                                                                                                                        self.vizinhos)
+    def tentaMinerar(self,poderMundialFator):
+      #sorteia um numero entre 0 e 1 
+      # se este numero maior que meupoder/poderMundialFator
+      # = minerei
+      # aumenta a minha blockchain e prepara o broadcast (flag=true)
+      
+   def executaBroadcast(self):
+    # se o flag indica true
+    #endai a nova blockchain para os viznho e falseia o  flag
+    
+    def recebe(self,blockchain):
+      # se a blockchain recebida for maior que a minha, aceita e prepara para o broadcast
+      
+      
+      
