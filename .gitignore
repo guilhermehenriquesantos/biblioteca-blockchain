@@ -1,8 +1,15 @@
 __pycache__/
 bases_exemplos/
+blockchain/
+conveniencias/
+mineradores/
 
 .vscode/
 
 blockchain.csv
 mineradores.csv
 tarefas.md
+Persistencia.py
+Principal.py
+Tabela.py
+ExemploExecucao.py
