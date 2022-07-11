@@ -31,7 +31,7 @@ if __name__ == '__main__':
         mundo = Mundo()
         mundo.criar_mineradores(30)
         for k, v in mundo.mineradores.items():
-            while (len(k.blockchain.livro_razao) < 10):
+            while (len(k.blockchain.livro_razao) < 10000):
                 mundo.sortear_minerador(10)
 
         tempo_decorrido = (time.time() - tempo_inicio)
