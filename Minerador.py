@@ -1,10 +1,14 @@
+import random
+
 from Blockchain import Blockchain
+from Bloco import Bloco
 from Mecanismo import Mecanismo
 
 
 class Minerador:
-    def __init__(self, identificador, mecanismo=None, poder_computacional=None, vizinhos=None, blockchain=None):
+    def __init__(self, identificador, mecanismo=None, poder_computacional=None, vizinhos=None, blockchain=None, propagar=False):
         self.identificador = identificador
+        self.propagar = propagar
 
         if (mecanismo != None):
             self.mecanismo = mecanismo
@@ -38,7 +42,7 @@ class Minerador:
     def atualizar(self, blockchain_atualizada):
         try:
             self.blockchain.atualizar(blockchain_atualizada)
-            self.propagar_atualizacao(self.blockchain)
+            self.propagar = True
 
             return self
         except Exception as error:
@@ -46,16 +50,58 @@ class Minerador:
                 'Ocorreu um erro que impossibilitou a atualização do minerador: {}'.format(error))
             return self
 
-    def minerar(self, bloco):
+    def minerar(self, bloco, poder_mundial):
         try:
             self.mecanismo.bloco = bloco
             self.mecanismo.prova_de_trabalho()
-            self.propagar_atualizacao(self.blockchain)
+            self.propagar = True
+            self.mineracao_egoista(poder_mundial)
+
+            return self
         except Exception as error:
             print(
                 'Ocorreu um erro que impossibilitou a realização do processo de mineração: {}'.format(error))
 
-    def propagar_atualizacao(self, blockchain_atualizada):
-        for i in range(len(self.vizinhos)):
-            if (len(self.vizinhos[i].blockchain.livro_razao) < len(self.blockchain.livro_razao)):
-                self.vizinhos[i].atualizar(blockchain_atualizada)
+    def propagar_atualizacao(self, mineradores_egoistas):
+        egoista = False
+        if (self.propagar):
+            for i in range(len(self.vizinhos)):
+                if (len(self.vizinhos[i].blockchain.livro_razao) < len(self.blockchain.livro_razao)):
+                    if (len(self.blockchain.livro_razao) > (len(self.vizinhos[i].blockchain.livro_razao) + 1)):
+                        for bloco, minerador in self.blockchain.historico_mineradores.items():
+                            if (self.blockchain.topo.hash_proprio == bloco and self.identificador == minerador.identificador):
+                                egoista = True
+                    self.vizinhos[i].atualizar(self.blockchain)
+
+            if (egoista):
+                mineradores_egoistas.mineradores_egoistas.append(self)
+
+            self.propagar = False
+
+            return self
+
+    def tentar_mineracao(self, poder_mundial):
+        if ((random.uniform(0, 1)) <= (self.poder_computacional)/poder_mundial):
+            bloco = self.criar_bloco()
+            self.minerar(bloco, poder_mundial)
+            return self
+
+    def criar_bloco(self):
+        if(self.blockchain.topo != None):
+            numero_bloco = self.blockchain.topo.numero + 1
+            dados = 'Dados do bloco ' + str(numero_bloco)
+            bloco = Bloco(numero_bloco, dados,
+                          self.blockchain.topo.hash_proprio)
+            return bloco
+        else:
+            numero_bloco = 1
+            dados = 'Dados do bloco ' + str(numero_bloco)
+            bloco = Bloco(numero_bloco, dados)
+            return bloco
+
+    def mineracao_egoista(self, poder_mundial):
+        for vizinho in self.vizinhos:
+            if (vizinho.propagar == True or vizinho.poder_computacional > self.poder_computacional):
+                return self
+
+        self.tentar_mineracao(poder_mundial)

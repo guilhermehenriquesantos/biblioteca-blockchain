@@ -7,9 +7,9 @@ class Persiste:
                     identificador = minerador.identificador
                     poder_computacional = minerador.poder_computacional
 
-                    mineradores_arquivo.write('Minerador: {} \tPoder: {}\n'.format(identificador,
-                                                                                   poder_computacional
-                                                                                   ))
+                    mineradores_arquivo.write('Minerador: {}\tPoder: {}\n'.format(identificador,
+                                                                                  poder_computacional
+                                                                                  ))
 
         except Exception as error:
             print('\nAlgum erro ocorreu ao exportar os mineradores\n', error)
@@ -45,7 +45,7 @@ class Persiste:
                                                                                          minerador))
 
         except Exception as error:
-            print('\nAlgum erro ocorreu ao exportar a blockchain\n', error)
+            print('\nAlgum erro ocorreu ao exportar o histórico de mineradores\n', error)
 
     def persistir_informacoes(self, mineradores):
         try:
@@ -58,13 +58,30 @@ class Persiste:
                         if (representante.identificador == minerador.identificador):
                             quantidade_blocos = quantidade_blocos + 1
 
-                    razao = quantidade_blocos//poder_computacional
+                    razao = quantidade_blocos/poder_computacional
 
-                    informacoes.write('Minerador: {} \tPoder: {}\tQuantidade blocos minerados: {}\t Razão: {}\n'.format(identificador,
-                                                                                                                        poder_computacional,
-                                                                                                                        quantidade_blocos,
-                                                                                                                        razao
-                                                                                                                        ))
+                    informacoes.write('Minerador: {}\tPoder: {}\tQuantidade blocos minerados: {}\tRazão: {:.2f}\n'.format(identificador,
+                                                                                                                          poder_computacional,
+                                                                                                                          quantidade_blocos,
+                                                                                                                          razao
+                                                                                                                          ))
 
         except Exception as error:
-            print('\nAlgum erro ocorreu ao exportar os mineradores\n', error)
+            print('\nAlgum erro ocorreu ao exportar as informações\n', error)
+
+    def persistir_bifurcacoes(self, mundo):
+        try:
+            with open('bifurcacoes.csv', 'w') as bifurcacoes:
+                for altura_bifurcacao, dicionario_informacoes_bifurcacao in mundo.bifurcacoes.items():
+                    for hash_bloco_bifurcado, dicionario_historico_mineradores in dicionario_informacoes_bifurcacao.items():
+                        array_mineradores = []
+                        for minerador in dicionario_historico_mineradores.keys():
+                            array_mineradores.append(minerador)
+                        bifurcacoes.write('Bifurcação na altura: {}\nHash do bloco: {}\nDiferentes mineradores para o bloco: {}\n\n'.format(
+                            altura_bifurcacao, hash_bloco_bifurcado, ', '.join(map(str, array_mineradores))))
+
+        except Exception as error:
+            print('\nAlgum erro ocorreu ao exportar as bifurcações\n', error)
+
+    def persistir_egoistas(self):
+        pass

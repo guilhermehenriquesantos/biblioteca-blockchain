@@ -6,6 +6,7 @@ csvs/
 .vscode/
 
 blockchain.csv
+bifurcacoes.csv
 historicoMineracao.csv
 informacoes.csv
 mineradores.csv
