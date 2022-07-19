@@ -1,7 +1,5 @@
 import random
-from array import array
 
-from Bloco import Bloco
 from Egoistas import Egoista
 from Minerador import Minerador
 
@@ -17,6 +15,15 @@ class Mundo:
         else:
             self.egoistas = Egoista()
 
+    def __str__(self):
+        return 'Mundo criado com {} mineradores. Possui o poder computacional mundial da rede de {}'.format(len(self.mineradores, self.poder_mundial))
+
+    '''
+    * Nome: criar_mineradores
+    * Parâmetros: próprio mundo e quantidade_mineradores (quantidade desejada de mineradores)
+    * Objetivo: criar um dicionário de objetos mineradores de acordo com a quantidade informada no parâmetro do método, já definindo o poder mundial da rede e os vizinhos que cada minerador do dicionário terá.
+    *
+    '''
     def criar_mineradores(self, quantidade_mineradores):
         for identificador in range(1, quantidade_mineradores + 1):
             novo_minerador = Minerador(
@@ -28,12 +35,24 @@ class Mundo:
         self.definir_vizinhos_minerador()
         return self
 
+    '''
+    * Nome: descobrir_poder_mundial
+    * Parâmetros: próprio mundo
+    * Objetivo: somar todo o poder computacional dos mineradores do mundo (rede).
+    *
+    '''
     def descobrir_poder_mundial(self):
         for poder in self.mineradores.values():
             self.poder_mundial = self.poder_mundial + poder
 
         return self
 
+    '''
+    * Nome: definir_vizinhos_minerador
+    * Parâmetros: próprio mundo
+    * Objetivo: cada minerador terá uma quantidade de vizinhos entre um e o tamanho da rede de mineradores menos ele mesmo, então é escolhido um número aleatório de acordo com essa quantidade que representará quantos vizinhos o minerador terá. Após a escolha da quantidade, percorre-se o mundo de mineradores para definir quais os mineradores serão os vizinhos do minerador.
+    *
+    '''
     def definir_vizinhos_minerador(self):
         for minerador in self.mineradores.keys():
             quantidade_vizinhos = random.randint(1, len(self.mineradores) - 1)
@@ -49,12 +68,24 @@ class Mundo:
 
         return self
 
+    '''
+    * Nome: ordenar_poder
+    * Parâmetros: próprio mundo
+    * Objetivo: ordena o dicionário de mineradores por poder computacional em ordem crescente.
+    *
+    '''
     def ordenar_poder(self):
         self.mineradores = {key: value for key, value in sorted(
             self.mineradores.items(), key=lambda item: item[1])}
 
         return self
 
+    '''
+    * Nome: iniciar_processamento
+    * Parâmetros: próprio mundo, quantidade_mineradores (quantidade desejada de mineradores) e quantidade_blocos_desejados (tamanho da blockchain desejada para realizar o processo de mineração)
+    * Objetivo: chamar os métodos necessários para criação dos mineradores que irão realizar processos de mineração e propagação até alcançarem a quantidade de blocos desejados. Após isso detectar quaisquer bifurcações na rede após minerações.
+    *
+    '''
     def iniciar_processamento(self, quantidade_mineradores, quantidade_blocos_desejados):
         self.criar_mineradores(quantidade_mineradores)
 
@@ -70,6 +101,12 @@ class Mundo:
 
         return self
 
+    '''
+    * Nome: detectar_bifurcacoes
+    * Parâmetros: próprio mundo
+    * Objetivo: percorrer a rede e verificar os mineradores que possuem uma blockchain de mesmo tamanho porém os mineradores do bloco em questão são diferentes. Após verificar essa informação, atualizar as bifurcações existentes no mundo com um dicionário que informará a altura que ocorreu a bifurcação, o hash do bloco e os diferentes mineradores que mineraram o bloco correspondente.
+    *
+    '''
     def detectar_bifurcacoes(self):
         for minerador in self.mineradores.keys():
             for blockchain_comparativa in self.mineradores.keys():

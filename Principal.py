@@ -17,7 +17,7 @@ def limpar_tela():
 
 '''
 * Execução da aplicação
-* Objetivo: Execução principal
+* Objetivo: chamar as classes responsáveis por realizar o processo de simulação de uma blockchain
 *
 '''
 if __name__ == '__main__':
@@ -45,9 +45,10 @@ if __name__ == '__main__':
             break
 
         print('\nQuantidade de minerações de forma egoísta: {}'.format(len(mundo.egoistas.mineradores_egoistas)))
-        print('Quantidade de birfurcações: {}'.format(len(mundo.bifurcacoes)))
+        print('Quantidade de birfurcações em todo o processo: {}'.format(len(mundo.bifurcacoes)))
 
         persistencia.persistir_mineradores(mundo.mineradores)
+        persistencia.persistir_topos(mundo.mineradores)
         persistencia.persistir_blockchain(blockchain)
         persistencia.persistir_historico(blockchain)
         persistencia.persistir_bifurcacoes(mundo)
