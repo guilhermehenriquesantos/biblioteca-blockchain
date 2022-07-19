@@ -5,7 +5,9 @@ csvs/
 
 .vscode/
 
-blockchain.csv
-historicoMineracao.csv
-informacoes.csv
-mineradores.csv
+_bifurcacoes.csv
+_blockchain.csv
+_historicoMineracao.csv
+_informacoes.csv
+_mineradores.csv
+_toposBlockchain.csv

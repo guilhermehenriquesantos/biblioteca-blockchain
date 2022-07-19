@@ -1,10 +1,9 @@
-from os import error
 import os
 import time
+from os import error
 
 from Mundo import Mundo
 from Persistencia import Persiste
-
 
 '''
 * Nome: limpar_tela
@@ -18,7 +17,7 @@ def limpar_tela():
 
 '''
 * Execução da aplicação
-* Objetivo: Execução principal
+* Objetivo: chamar as classes responsáveis por realizar o processo de simulação de uma blockchain
 *
 '''
 if __name__ == '__main__':
@@ -29,25 +28,30 @@ if __name__ == '__main__':
         tempo_inicio = time.time()
 
         mundo = Mundo()
-        mundo.criar_mineradores(30)
-        for k, v in mundo.mineradores.items():
-            while (len(k.blockchain.livro_razao) < 10000):
-                mundo.sortear_minerador(10)
+        mundo.iniciar_processamento(30, 10000)
 
         tempo_decorrido = (time.time() - tempo_inicio)
+
         if (tempo_decorrido >= 60):
             tempo_decorrido = tempo_decorrido/60
-            print('As minerações acabaram, tempo decorrido: {:.2f} minutos'.format(tempo_decorrido))
+            print('As minerações acabaram, tempo decorrido: {:.2f} minutos'.format(
+                tempo_decorrido))
         else:
-            print('As minerações acabaram, tempo decorrido: {:.2f} segundos'.format(tempo_decorrido))
-        
+            print('As minerações acabaram, tempo decorrido: {:.2f} segundos'.format(
+                tempo_decorrido))
+
         for miner in mundo.mineradores.keys():
             blockchain = miner.blockchain
             break
-        
+
+        print('\nQuantidade de minerações de forma egoísta: {}'.format(len(mundo.egoistas.mineradores_egoistas)))
+        print('Quantidade de birfurcações em todo o processo: {}'.format(len(mundo.bifurcacoes)))
+
         persistencia.persistir_mineradores(mundo.mineradores)
+        persistencia.persistir_topos(mundo.mineradores)
         persistencia.persistir_blockchain(blockchain)
         persistencia.persistir_historico(blockchain)
+        persistencia.persistir_bifurcacoes(mundo)
         mundo.ordenar_poder()
         persistencia.persistir_informacoes(mundo.mineradores)
 

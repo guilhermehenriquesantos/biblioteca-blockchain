@@ -12,6 +12,12 @@ class Mecanismo:
         else:
             return 'MINERADOR: {}'.format(self.minerador.identificador)
 
+    '''
+    * Nome: prova_de_trabalho
+    * Parâmetros: próprio mecanismo
+    * Objetivo: realizar o processo para obtenção de consenso baseado em prova de trabalho (PoW), esse método é o principal responsável pela realização do processo de mineração e validação de um novo bloco.
+    *
+    '''
     def prova_de_trabalho(self):
         quantidade_prefixo = 4
         prefixo = '0'*quantidade_prefixo

@@ -18,6 +18,12 @@ class Blockchain:
     def __str__(self):
         return 'Minerador detentor da blockchain: {}\n'.format(self.representante.identificador)
 
+    '''
+    * Nome: atualizar
+    * Parâmetros: própria blockchain e blockchain_atualizada (blockchain com os novos dados a serem inseridos)
+    * Objetivo: verificar os dados faltantes em uma blockchain e completar com os dados da blockchain mais atualizada.
+    *
+    '''
     def atualizar(self, blockchain_atualizada):
         try:
             for key, value in blockchain_atualizada.livro_razao.items():
@@ -36,6 +42,12 @@ class Blockchain:
             print('Não foi possível atualizar a blockchain, erro: {}'.format(error))
             return self
 
+    '''
+    * Nome: inserir
+    * Parâmetros: bloco
+    * Objetivo: inserir um novo bloco no livro razão da blockchain, atualizar o último bloco do topo da blockchain e atualizar o histórico de mineradores com o hash do bloco minerado e o minerador representante desse bloco.
+    *
+    '''
     def inserir(self, bloco):
         self.livro_razao[bloco.numero] = bloco
         self.topo = bloco
@@ -43,6 +55,12 @@ class Blockchain:
 
         return self
 
+    '''
+    * Nome: ordenar
+    * Parâmetros: própria blockchain
+    * Objetivo: ordenar o livro razão pelo número do bloco.
+    *
+    '''
     def ordenar(self):
         self.livro_razao = {key: value for key, value in sorted(
             self.livro_razao.items(), key=lambda item: item[0])}
