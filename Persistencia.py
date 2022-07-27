@@ -1,4 +1,20 @@
+import os
+
+import matplotlib.pyplot as plt
+
+
 class Persiste:
+    def __init__(self, experimento, diretorio=None):
+        self.experimento = experimento
+
+        if (diretorio != None):
+            self.diretorio = diretorio
+        else:
+            self.diretorio = './resultados/'
+
+        self.estrutura = self.diretorio + self.experimento
+
+        os.makedirs(self.estrutura, exist_ok=True)
 
     '''
     * Nome: persistir_mineradores
@@ -8,14 +24,16 @@ class Persiste:
     '''
     def persistir_mineradores(self, mineradores):
         try:
-            with open('_mineradores.csv', 'w') as mineradores_arquivo:
+            with open(self.estrutura + 'mineradores.csv', 'w') as mineradores_arquivo:
                 for minerador in mineradores.keys():
                     identificador = minerador.identificador
                     poder_computacional = minerador.poder_computacional
+                    quantidade_vizinhos = len(minerador.vizinhos)
 
-                    mineradores_arquivo.write('Minerador: {}\tPoder: {}\n'.format(identificador,
-                                                                                  poder_computacional
-                                                                                  ))
+                    mineradores_arquivo.write('Minerador: {}\tPoder: {}\tQuantidade de vizinhos {}\n'.format(identificador,
+                                                                                                             poder_computacional,
+                                                                                                             quantidade_vizinhos
+                                                                                                             ))
 
         except Exception as error:
             print('\nAlgum erro ocorreu ao exportar os mineradores\n', error)
@@ -28,7 +46,7 @@ class Persiste:
     '''
     def persistir_blockchain(self, blockchain):
         try:
-            with open('_blockchain.csv', 'w') as blockchain_arquivo:
+            with open(self.estrutura + 'blockchain.csv', 'w') as blockchain_arquivo:
                 for bloco in blockchain.livro_razao.values():
                     numero = bloco.numero
                     dados = bloco.dados
@@ -54,7 +72,7 @@ class Persiste:
     '''
     def persistir_historico(self, blockchain):
         try:
-            with open('_historicoMineracao.csv', 'w') as historico_arquivo:
+            with open(self.estrutura + 'historicoMineracao.csv', 'w') as historico_arquivo:
                 for bloco, representante in blockchain.historico_mineradores.items():
                     hash_bloco = bloco
                     minerador = representante.identificador
@@ -73,7 +91,7 @@ class Persiste:
     '''
     def persistir_informacoes(self, mineradores):
         try:
-            with open('_informacoes.csv', 'w') as informacoes:
+            with open(self.estrutura + 'informacoes.csv', 'w') as informacoes:
                 for minerador in mineradores.keys():
                     quantidade_blocos = 0
                     identificador = minerador.identificador
@@ -96,43 +114,28 @@ class Persiste:
     '''
     * Nome: persistir_bifurcacoes
     * Parâmetros: mundo
-    * Objetivo: exportar para um arquivo CSV as informações sobre ocorrência de bifurcações, como altura da blockchain que ocorreu uma bifurcação, bloco e mineradores envolvidos.
+    * Objetivo: exportar para um arquivo CSV as informações sobre ocorrência de bifurcações, como altura da blockchain que ocorreu uma bifurcação e quantas blockchains diferentes existem nessa altura. Além disso exportar um gráfico em um arquivo de imagem PNG.
     *
     '''
     def persistir_bifurcacoes(self, mundo):
         try:
-            with open('_bifurcacoes.csv', 'w') as bifurcacoes:
-                for altura_bifurcacao, dicionario_informacoes_bifurcacao in mundo.bifurcacoes.items():
-                    for hash_bloco_bifurcado, dicionario_historico_mineradores in dicionario_informacoes_bifurcacao.items():
-                        array_mineradores = []
-                        for minerador in dicionario_historico_mineradores.keys():
-                            array_mineradores.append(minerador)
-                        bifurcacoes.write('Bifurcação na altura: {}\nHash do bloco: {}\nDiferentes mineradores para o bloco: {}\n\n'.format(
-                            altura_bifurcacao, hash_bloco_bifurcado, ', '.join(map(str, array_mineradores))))
+            with open(self.estrutura + 'bifurcacoes.csv', 'w') as bifurcacoes:
+                for altura_bifurcacao, quantidade_blockchains in mundo.bifurcacoes.items():
+                    bifurcacoes.write('Bifurcação na altura: {}\tQuantidade de blockchains existentes: {}\n'.format(
+                        altura_bifurcacao, quantidade_blockchains))
+
+            bifurcacoes = mundo.bifurcacoes.items()
+            bifurcacoes = sorted(bifurcacoes)
+            x, y = zip(*bifurcacoes)
+
+            grafico, ax = plt.subplots()
+            ax.plot(x, y)
+            plt.title('Análise de bifurcações')
+            plt.ylabel('Quantidade de bifurcações')
+            plt.xlabel('Altura da blockchain')
+            grafico.savefig(self.estrutura +
+                        'bifurcacoes-grafico.png', format='png')
+            plt.close(grafico)
 
         except Exception as error:
             print('\nAlgum erro ocorreu ao exportar as bifurcações\n', error)
-
-    '''
-    * Nome: persistir_topos
-    * Parâmetros: mineradores (dicionário de mineradores)
-    * Objetivo: exportar para um arquivo CSV as informações do último bloco que cada minerador possui em sua blockchain.
-    *
-    '''
-    def persistir_topos(self, mineradores):
-        try:
-            with open('_toposBlockchain.csv', 'w') as mineradores_arquivo:
-                for minerador in mineradores.keys():
-                    identificador = minerador.identificador
-                    topo = minerador.blockchain.topo
-                    numero = topo.numero
-                    hash = topo.hash_proprio
-
-                    mineradores_arquivo.write('Minerador: {}\tAltura da blockchain: {}\tÚltimo bloco: {}\n'.format(identificador,
-                                                                                                                   numero,
-                                                                                                                   hash
-                                                                                                                   ))
-
-        except Exception as error:
-            print(
-                '\nAlgum erro ocorreu ao exportar o topo da blockchain de cada minerador\n', error)

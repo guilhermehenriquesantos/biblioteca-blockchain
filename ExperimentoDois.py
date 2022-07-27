@@ -17,16 +17,16 @@ def limpar_tela():
 
 '''
 * Nome: experimento
-* Parâmetros: vazio
-* Objetivo: os mineradores possuirão poderes computacionais variados e quantidade de vizinhos variadas.
+* Parâmetros: poder_computacional
+* Objetivo: os mineradores possuirão poderes computacionais iguais e a quantidade de vizinhos variadas.
 *
 '''
-def experimento():
+def experimento(poder_computacional):
     try:
-        persistencia = Persiste('Experimento_0/')
+        persistencia = Persiste('Experimento_2/')
 
         mundo = Mundo()
-        mundo.iniciar_processamento(30, 1000)
+        mundo.iniciar_processamento(30, 1000, None, poder_computacional)
 
         for miner in mundo.mineradores.keys():
             blockchain = miner.blockchain
@@ -52,14 +52,14 @@ if __name__ == '__main__':
     try:
         limpar_tela()
 
-        print('O início do experimento zero começou, aguarde...')
+        print('O início do experimento dois começou, aguarde...')
         print('_______________________________________________________________')
         print('\nO experimento possui a seguinte característica: \n')
-        print('0- Os mineradores possuirão poderes computacionais variados e quantidade de vizinhos variadas.\n')
+        print('2- Os mineradores possuirão poderes computacionais iguais e a quantidade de vizinhos variadas.\n')
 
         tempo_inicio = time.time()
 
-        experimento()
+        experimento(100)
 
         tempo_decorrido = (time.time() - tempo_inicio)
 

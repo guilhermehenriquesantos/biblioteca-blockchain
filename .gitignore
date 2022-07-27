@@ -2,12 +2,5 @@ __pycache__/
 bases_exemplos/
 antigos/
 csvs/
-
+resultados/
 .vscode/
-
-_bifurcacoes.csv
-_blockchain.csv
-_historicoMineracao.csv
-_informacoes.csv
-_mineradores.csv
-_toposBlockchain.csv

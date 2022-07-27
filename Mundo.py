@@ -24,15 +24,19 @@ class Mundo:
     * Objetivo: criar um dicionário de objetos mineradores de acordo com a quantidade informada no parâmetro do método, já definindo o poder mundial da rede e os vizinhos que cada minerador do dicionário terá.
     *
     '''
-    def criar_mineradores(self, quantidade_mineradores):
+    def criar_mineradores(self, quantidade_mineradores, poder_computacional, quantidade_vizinhos):
         for identificador in range(1, quantidade_mineradores + 1):
-            novo_minerador = Minerador(
-                identificador, None, random.randint(1, 100))
+            if (poder_computacional == None):
+                novo_minerador = Minerador(
+                    identificador, None, random.randint(1, 100))
+            else:
+                novo_minerador = Minerador(
+                    identificador, None, poder_computacional)
 
             self.mineradores[novo_minerador] = novo_minerador.poder_computacional
 
         self.descobrir_poder_mundial()
-        self.definir_vizinhos_minerador()
+        self.definir_vizinhos_minerador(quantidade_vizinhos)
         return self
 
     '''
@@ -53,9 +57,13 @@ class Mundo:
     * Objetivo: cada minerador terá uma quantidade de vizinhos entre um e o tamanho da rede de mineradores menos ele mesmo, então é escolhido um número aleatório de acordo com essa quantidade que representará quantos vizinhos o minerador terá. Após a escolha da quantidade, percorre-se o mundo de mineradores para definir quais os mineradores serão os vizinhos do minerador.
     *
     '''
-    def definir_vizinhos_minerador(self):
+    def definir_vizinhos_minerador(self, quantidade_definida):
         for minerador in self.mineradores.keys():
-            quantidade_vizinhos = random.randint(1, len(self.mineradores) - 1)
+            if (quantidade_definida == None):
+                quantidade_vizinhos = random.randint(
+                    1, len(self.mineradores) - 1)
+            else:
+                quantidade_vizinhos = quantidade_definida
 
             for i in range(0, quantidade_vizinhos):
                 vizinho_escolhido = random.choice(
@@ -86,8 +94,9 @@ class Mundo:
     * Objetivo: chamar os métodos necessários para criação dos mineradores que irão realizar processos de mineração e propagação até alcançarem a quantidade de blocos desejados. Após isso detectar quaisquer bifurcações na rede após minerações.
     *
     '''
-    def iniciar_processamento(self, quantidade_mineradores, quantidade_blocos_desejados):
-        self.criar_mineradores(quantidade_mineradores)
+    def iniciar_processamento(self, quantidade_mineradores, quantidade_blocos_desejados, quantidade_vizinhos=None, poder_computacional=None):
+        self.criar_mineradores(quantidade_mineradores,
+                               poder_computacional, quantidade_vizinhos)
 
         for minerador in self.mineradores.keys():
             while (len(minerador.blockchain.livro_razao) < quantidade_blocos_desejados):
@@ -104,26 +113,47 @@ class Mundo:
     '''
     * Nome: detectar_bifurcacoes
     * Parâmetros: próprio mundo
-    * Objetivo: percorrer a rede e verificar os mineradores que possuem uma blockchain de mesmo tamanho porém os mineradores do bloco em questão são diferentes. Após verificar essa informação, atualizar as bifurcações existentes no mundo com um dicionário que informará a altura que ocorreu a bifurcação, o hash do bloco e os diferentes mineradores que mineraram o bloco correspondente.
+    * Objetivo: olhar para a rede e capturar a blockchain de maior altura, observar quantas bifurcações ela tem por meio da quantidade de mineradores que mineraram um bloco válido com a mesma altura e hash ao mesmo tempo e enviaram para seus vizinhos, após verificar essas informações deve-se retirar a duplicidade dos dados e gravar apenas a quantidade de variações da blockchain em determinada altura.
     *
     '''
     def detectar_bifurcacoes(self):
-        for minerador in self.mineradores.keys():
-            for blockchain_comparativa in self.mineradores.keys():
-                if ((len(minerador.blockchain.livro_razao) == len(blockchain_comparativa.blockchain.livro_razao)) and (minerador.blockchain.topo != blockchain_comparativa.blockchain.topo) and (minerador.blockchain.topo.hash_proprio == blockchain_comparativa.blockchain.topo.hash_proprio)):
-                    self.bifurcacoes[len(
-                        minerador.blockchain.livro_razao)] = {}
-                    self.bifurcacoes[len(
-                        minerador.blockchain.livro_razao)][minerador.blockchain.topo.hash_proprio] = {}
+        try:
+            maior_altura = 0
+            bifurcacao = False
+            for minerador in self.mineradores.keys():
+                maior_altura = len(minerador.blockchain.livro_razao)
+                if (len(minerador.blockchain.livro_razao) > maior_altura):
+                    maior_altura = len(minerador.blockchain.livro_razao)
 
-                    for hash, minerou_bloco in minerador.blockchain.historico_mineradores.items():
-                        if (hash == minerador.blockchain.topo.hash_proprio):
-                            self.bifurcacoes[len(minerador.blockchain.livro_razao)][minerador.blockchain.topo.hash_proprio][
-                                minerou_bloco.identificador] = minerou_bloco.poder_computacional
+            if (maior_altura > 0):
+                for minerador in self.mineradores.keys():
+                    bifurcacao = False
+                    blockchain_existentes = []
 
-                    for hash, minerou_bloco in blockchain_comparativa.blockchain.historico_mineradores.items():
-                        if (hash == blockchain_comparativa.blockchain.topo.hash_proprio):
-                            self.bifurcacoes[len(minerador.blockchain.livro_razao)][minerador.blockchain.topo.hash_proprio][
-                                minerou_bloco.identificador] = minerou_bloco.poder_computacional
+                    if (len(minerador.blockchain.livro_razao) == maior_altura):
+                        for blockchain_comparativa in self.mineradores.keys():
+                            if ((len(minerador.blockchain.livro_razao) == len(blockchain_comparativa.blockchain.livro_razao))
+                                and (minerador.blockchain.topo.hash_proprio == blockchain_comparativa.blockchain.topo.hash_proprio)
+                                    and (minerador.blockchain.historico_mineradores[minerador.blockchain.topo.hash_proprio].identificador != blockchain_comparativa.blockchain.historico_mineradores[blockchain_comparativa.blockchain.topo.hash_proprio].identificador)):
+                                bifurcacao = True
+                                blockchain_existentes.append(
+                                    minerador.blockchain.historico_mineradores[minerador.blockchain.topo.hash_proprio].identificador)
+                                blockchain_existentes.append(
+                                    blockchain_comparativa.blockchain.historico_mineradores[blockchain_comparativa.blockchain.topo.hash_proprio].identificador)
 
-        return self
+                        if (bifurcacao):
+                            blockchain_existentes = sorted(
+                                set(blockchain_existentes))
+                            self.bifurcacoes[len(minerador.blockchain.livro_razao)] = len(
+                                blockchain_existentes)
+                            return self
+                        else:
+                            self.bifurcacoes[len(
+                                minerador.blockchain.livro_razao)] = 1
+                            return self
+
+            return self
+
+        except Exception as error:
+            print('Ocorreu um erro ao detectar as bifurcações: {}'.format(error))
+            return self

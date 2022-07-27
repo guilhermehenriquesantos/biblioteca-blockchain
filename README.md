@@ -9,18 +9,19 @@ Esse trabalho de conclusão de curso visa realizar a criação de biblioteca ope
 
 1. Criação de uma base de mineradores;
 2. Definição dos vizinhos de cada minerador;
-3. Loteria para escolha dos mineradores que irão realizar o processo de mineração;
+3. Tentativa de mineração dos mineradores que irão realizar o processo para minerar;
 4. Realização do processo de mineração utilizando o algoritmo para obtenção de consenso por meio de prova de trabalho (PoW);
 5. Atualização da blockchain do minerador e repasse para seus vizinhos;
 6. Verificação de ocorrências de bifurcações;
 7. Possibilidade para realização de minerações de forma egoísta;
-8. Informações relevantes exportadas para arquivos em formato CSV.
+8. Informações relevantes exportadas para arquivos em formato CSV e gráficos em PNG.
 
 ## Procedimentos de execução
 
 1. Faça o clone do projeto em sua máquina;
-2. Execute o arquivo `Principal.py`;
-3. Observe a simulação de uma blockchain baseada na realidade. Esse processo pode demorar de acordo com a quantidade de blocos desejada, quanto mais blocos, maior o tempo de espera, para 10 mil blocos em uma máquina i3, dual core, 20Gb de RAM e SSD essa mineração demora cerca de 1 hora.
+2. Instale a biblioteca matplotlib para poder visualizar os gráficos de análise: **`pip install -U matplotlib`**
+3. Execute os arquivos **`Principal.py`**, **`ExperimentoUm.py`** e **`ExperimentoDois.py`**;
+4. Observe a simulação de uma blockchain baseada na realidade. Esse processo pode demorar de acordo com a quantidade de blocos desejada, quanto mais blocos, maior o tempo de espera.
 
 ### Agradecimentos
 
