@@ -26,18 +26,17 @@ def experimento():
         persistencia = Persiste('Experimento_0/')
 
         mundo = Mundo()
-        mundo.iniciar_processamento(30, 1000)
+        mundo.iniciar_processamento(30, 10000)
 
         for miner in mundo.mineradores.keys():
             blockchain = miner.blockchain
             break
 
+        mundo.ordenar_poder()
         persistencia.persistir_mineradores(mundo.mineradores)
         persistencia.persistir_blockchain(blockchain)
         persistencia.persistir_historico(blockchain)
         persistencia.persistir_bifurcacoes(mundo)
-        mundo.ordenar_poder()
-        persistencia.persistir_informacoes(mundo.mineradores)
 
     except Exception as error:
         print('Ocorreu o erro: {}'.format(error))
@@ -55,7 +54,7 @@ if __name__ == '__main__':
         print('O início do experimento zero começou, aguarde...')
         print('_______________________________________________________________')
         print('\nO experimento possui a seguinte característica: \n')
-        print('0- Os mineradores possuirão poderes computacionais variados e quantidade de vizinhos variadas.\n')
+        print('Os mineradores possuirão poderes computacionais variados e quantidade de vizinhos variadas.\n')
 
         tempo_inicio = time.time()
 

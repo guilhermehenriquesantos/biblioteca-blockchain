@@ -1,6 +1,7 @@
 import os
 
 import matplotlib.pyplot as plt
+from prettytable import PrettyTable
 
 
 class Persiste:
@@ -10,7 +11,7 @@ class Persiste:
         if (diretorio != None):
             self.diretorio = diretorio
         else:
-            self.diretorio = './resultados/'
+            self.diretorio = './Experimentos/'
 
         self.estrutura = self.diretorio + self.experimento
 
@@ -19,21 +20,33 @@ class Persiste:
     '''
     * Nome: persistir_mineradores
     * Parâmetros: mineradores (dicionário de mineradores)
-    * Objetivo: exportar para um arquivo CSV as informações relevantes de cada minerador da rede.
+    * Objetivo: exportar para um arquivo CSV a tabela com as análises mais relevantes referente aos mineradores.
     *
     '''
     def persistir_mineradores(self, mineradores):
         try:
-            with open(self.estrutura + 'mineradores.csv', 'w') as mineradores_arquivo:
-                for minerador in mineradores.keys():
-                    identificador = minerador.identificador
-                    poder_computacional = minerador.poder_computacional
-                    quantidade_vizinhos = len(minerador.vizinhos)
+            tabela = PrettyTable(['Minerador', 'Quantidade de vizinhos', 'Poder',
+                                 'Blocos minerados', 'Razão blocos minerados/poder'])
 
-                    mineradores_arquivo.write('Minerador: {}\tPoder: {}\tQuantidade de vizinhos {}\n'.format(identificador,
-                                                                                                             poder_computacional,
-                                                                                                             quantidade_vizinhos
-                                                                                                             ))
+            for minerador in mineradores.keys():
+                quantidade_blocos = 0
+
+                for representante in minerador.blockchain.historico_mineradores.values():
+                    if (representante.identificador == minerador.identificador):
+                        quantidade_blocos = quantidade_blocos + 1
+
+                razao = quantidade_blocos/minerador.poder_computacional
+
+                tabela.add_row([minerador.identificador,
+                                len(minerador.vizinhos),
+                                minerador.poder_computacional,
+                                quantidade_blocos,
+                                round(razao, 2)])
+
+            dados = tabela.get_string()
+
+            with open(self.estrutura + 'mineradores.csv', 'w') as mineradores_arquivo:
+                mineradores_arquivo.write(dados)
 
         except Exception as error:
             print('\nAlgum erro ocorreu ao exportar os mineradores\n', error)
@@ -72,44 +85,20 @@ class Persiste:
     '''
     def persistir_historico(self, blockchain):
         try:
-            with open(self.estrutura + 'historicoMineracao.csv', 'w') as historico_arquivo:
-                for bloco, representante in blockchain.historico_mineradores.items():
-                    hash_bloco = bloco
-                    minerador = representante.identificador
+            tabela = PrettyTable(
+                ['Hash do bloco minerado', 'Minerador que realizou a mineração'])
 
-                    historico_arquivo.write('Bloco minerado: {}\tMinerador: {}\n'.format(hash_bloco,
-                                                                                         minerador))
+            for bloco, representante in blockchain.historico_mineradores.items():
+                tabela.add_row([bloco,
+                                representante.identificador])
+
+            dados = tabela.get_string()
+
+            with open(self.estrutura + 'historicoMineracao.csv', 'w') as historico_arquivo:
+                historico_arquivo.write(dados)
 
         except Exception as error:
             print('\nAlgum erro ocorreu ao exportar o histórico de mineradores\n', error)
-
-    '''
-    * Nome: persistir_informacoes
-    * Parâmetros: mineradores (dicionário de mineradores)
-    * Objetivo: exportar para um arquivo CSV a influência que o poder computacional tem sobre quantidade de blocos que um minerador irá minerar.
-    *
-    '''
-    def persistir_informacoes(self, mineradores):
-        try:
-            with open(self.estrutura + 'informacoes.csv', 'w') as informacoes:
-                for minerador in mineradores.keys():
-                    quantidade_blocos = 0
-                    identificador = minerador.identificador
-                    poder_computacional = minerador.poder_computacional
-                    for representante in minerador.blockchain.historico_mineradores.values():
-                        if (representante.identificador == minerador.identificador):
-                            quantidade_blocos = quantidade_blocos + 1
-
-                    razao = quantidade_blocos/poder_computacional
-
-                    informacoes.write('Minerador: {}\tPoder: {}\tQuantidade blocos minerados: {}\tRazão: {:.2f}\n'.format(identificador,
-                                                                                                                          poder_computacional,
-                                                                                                                          quantidade_blocos,
-                                                                                                                          razao
-                                                                                                                          ))
-
-        except Exception as error:
-            print('\nAlgum erro ocorreu ao exportar as informações\n', error)
 
     '''
     * Nome: persistir_bifurcacoes
@@ -119,22 +108,20 @@ class Persiste:
     '''
     def persistir_bifurcacoes(self, mundo):
         try:
-            with open(self.estrutura + 'bifurcacoes.csv', 'w') as bifurcacoes:
-                for altura_bifurcacao, quantidade_blockchains in mundo.bifurcacoes.items():
-                    bifurcacoes.write('Bifurcação na altura: {}\tQuantidade de blockchains existentes: {}\n'.format(
-                        altura_bifurcacao, quantidade_blockchains))
-
             bifurcacoes = mundo.bifurcacoes.items()
             bifurcacoes = sorted(bifurcacoes)
             x, y = zip(*bifurcacoes)
 
             grafico, ax = plt.subplots()
             ax.plot(x, y)
+
             plt.title('Análise de bifurcações')
             plt.ylabel('Quantidade de bifurcações')
             plt.xlabel('Altura da blockchain')
+
             grafico.savefig(self.estrutura +
-                        'bifurcacoes-grafico.png', format='png')
+                            'bifurcacoes-grafico.png', format='png')
+
             plt.close(grafico)
 
         except Exception as error:
