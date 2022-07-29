@@ -30,9 +30,7 @@ class Blockchain:
                 if (key not in self.livro_razao.keys()):
                     self.livro_razao[key] = value
 
-            for key, value in blockchain_atualizada.historico_mineradores.items():
-                if (key not in self.historico_mineradores.keys()):
-                    self.historico_mineradores[key] = value
+            self.historico_mineradores = blockchain_atualizada.historico_mineradores.copy()
 
             self.ordenar()
             self.topo = self.livro_razao.get(max(self.livro_razao))
