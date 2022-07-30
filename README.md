@@ -13,7 +13,8 @@ Esse trabalho de conclusão de curso visa realizar a criação de biblioteca ope
 4. Realização do processo de mineração utilizando o algoritmo para obtenção de consenso por meio de prova de trabalho (PoW);
 5. Atualização da blockchain do minerador e repasse para seus vizinhos;
 6. Verificação de ocorrências de bifurcações;
-7. Informações relevantes exportadas para arquivos em formato CSV e gráficos em PNG.
+7. Possibilidade para realização de minerações de forma egoísta;
+8. Informações relevantes exportadas para arquivos em formato CSV e gráficos em PNG.
 
 ## Procedimentos de execução
 
