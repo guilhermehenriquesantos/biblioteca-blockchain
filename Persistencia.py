@@ -19,11 +19,11 @@ class Persiste:
 
     '''
     * Nome: persistir_mineradores
-    * Parâmetros: mineradores (dicionário de mineradores)
+    * Parâmetros: mineradores (dicionário de mineradores) e blockchain (blockchain mais atualizada na base de mineradores)
     * Objetivo: exportar para um arquivo CSV a tabela com as análises mais relevantes referente aos mineradores.
     *
     '''
-    def persistir_mineradores(self, mineradores):
+    def persistir_mineradores(self, mineradores, blockchain):
         try:
             tabela = PrettyTable(['Minerador', 'Quantidade de vizinhos', 'Poder',
                                  'Blocos minerados', 'Razão blocos minerados/poder'])
@@ -31,7 +31,7 @@ class Persiste:
             for minerador in mineradores.keys():
                 quantidade_blocos = 0
 
-                for representante in minerador.blockchain.historico_mineradores.values():
+                for representante in blockchain.historico_mineradores.values():
                     if (representante.identificador == minerador.identificador):
                         quantidade_blocos = quantidade_blocos + 1
 

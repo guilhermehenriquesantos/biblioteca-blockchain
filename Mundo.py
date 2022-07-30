@@ -1,19 +1,13 @@
 import random
 
-from Egoistas import Egoista
 from Minerador import Minerador
 
 
 class Mundo:
-    def __init__(self, mineradores={}, poder_mundial=0, bifurcacoes={}, egoistas=None):
+    def __init__(self, mineradores={}, poder_mundial=0, bifurcacoes={}):
         self.mineradores = mineradores
         self.poder_mundial = poder_mundial
         self.bifurcacoes = bifurcacoes
-
-        if (egoistas != None):
-            self.egoistas = egoistas
-        else:
-            self.egoistas = Egoista()
 
     def __str__(self):
         return 'Mundo criado com {} mineradores. Possui o poder computacional mundial da rede de {}'.format(len(self.mineradores, self.poder_mundial))
@@ -98,15 +92,19 @@ class Mundo:
         self.criar_mineradores(quantidade_mineradores,
                                poder_computacional, quantidade_vizinhos)
 
-        for minerador in self.mineradores.keys():
-            while (len(minerador.blockchain.livro_razao) < quantidade_blocos_desejados):
-                for minerador in self.mineradores.keys():
-                    minerador.tentar_mineracao(self.poder_mundial)
+        pare = False
+        while (not pare):
+            for minerador in self.mineradores.keys():
+                minerador.tentar_mineracao(self.poder_mundial)
 
-                for minerador in self.mineradores.keys():
-                    minerador.propagar_atualizacao(self.egoistas)
+            for minerador in self.mineradores.keys():
+                minerador.propagar_atualizacao()
 
-                self.detectar_bifurcacoes()
+            self.detectar_bifurcacoes()
+
+            for minerador in self.mineradores.keys():
+                if (len(minerador.blockchain.livro_razao) >= quantidade_blocos_desejados):
+                    pare = True
 
         return self
 

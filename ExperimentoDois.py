@@ -21,19 +21,19 @@ def limpar_tela():
 * Objetivo: os mineradores possuirão poderes computacionais iguais e a quantidade de vizinhos variadas.
 *
 '''
-def experimento(poder_computacional):
+def experimento(quantidade_blocos, poder_computacional):
     try:
         persistencia = Persiste('Experimento_2/')
 
         mundo = Mundo()
-        mundo.iniciar_processamento(30, 10000, None, poder_computacional)
+        mundo.iniciar_processamento(30, quantidade_blocos, None, poder_computacional)
 
-        for miner in mundo.mineradores.keys():
-            blockchain = miner.blockchain
-            break
+        for minerador in mundo.mineradores.keys():
+            if (len(minerador.blockchain.livro_razao) >= quantidade_blocos):
+                blockchain = minerador.blockchain
 
         mundo.ordenar_poder()
-        persistencia.persistir_mineradores(mundo.mineradores)
+        persistencia.persistir_mineradores(mundo.mineradores, blockchain)
         persistencia.persistir_blockchain(blockchain)
         persistencia.persistir_historico(blockchain)
         persistencia.persistir_bifurcacoes(mundo)
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
         tempo_inicio = time.time()
 
-        experimento(100)
+        experimento(10000, 100)
 
         tempo_decorrido = (time.time() - tempo_inicio)
 
