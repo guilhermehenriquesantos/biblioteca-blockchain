@@ -1,19 +1,13 @@
 import random
 
-from Egoista import Egoista
 from Minerador import Minerador
 
 
 class Mundo:
-    def __init__(self, mineradores={}, poder_mundial=0, bifurcacoes={}, egoistas=None):
+    def __init__(self, mineradores={}, poder_mundial=0, bifurcacoes={}):
         self.mineradores = mineradores
         self.poder_mundial = poder_mundial
         self.bifurcacoes = bifurcacoes
-        
-        if (egoistas != None):
-            self.egoistas = egoistas
-        else:
-            self.egoistas = Egoista()
 
     def __str__(self):
         return 'Mundo criado com {} mineradores. Possui o poder computacional mundial da rede de {}'.format(len(self.mineradores, self.poder_mundial))
@@ -104,7 +98,7 @@ class Mundo:
                 minerador.tentar_mineracao(self.poder_mundial)
 
             for minerador in self.mineradores.keys():
-                minerador.propagar_atualizacao(self.egoistas)
+                minerador.propagar_atualizacao()
 
             self.detectar_bifurcacoes()
 
