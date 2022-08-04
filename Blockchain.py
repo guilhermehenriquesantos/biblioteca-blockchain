@@ -26,13 +26,8 @@ class Blockchain:
     '''
     def atualizar(self, blockchain_atualizada):
         try:
-            for key, value in blockchain_atualizada.livro_razao.items():
-                if (key not in self.livro_razao.keys()):
-                    self.livro_razao[key] = value
-
+            self.livro_razao = blockchain_atualizada.livro_razao.copy()
             self.historico_mineradores = blockchain_atualizada.historico_mineradores.copy()
-
-            self.ordenar()
             self.topo = self.livro_razao.get(max(self.livro_razao))
 
             return self

@@ -96,7 +96,6 @@ class Minerador:
     '''
     def tentar_mineracao(self, poder_mundial):
         if ((random.uniform(0, 1)) <= (self.poder_computacional)/poder_mundial):
-            bloco = Bloco()
-            bloco.criar_bloco(self)
+            bloco = Bloco(self)
             self.minerar(bloco)
             return self

@@ -19,15 +19,9 @@ class Mecanismo:
     *
     '''
     def prova_de_trabalho(self):
-        quantidade_prefixo = 4
+        quantidade_prefixo = 2
         prefixo = '0'*quantidade_prefixo
         maximo_nonce = 100000000000
-        bloco_genesis = '0000000000000000000000000000000000000000000000000000000000000000'
-
-        if (len(self.minerador.blockchain.livro_razao) > 0):
-            self.bloco.hash_anterior = self.minerador.blockchain.topo.hash_proprio
-        else:
-            self.bloco.hash_anterior = bloco_genesis
 
         for nonce in range(maximo_nonce):
             informacoes_bloco = str(self.bloco.numero) + \
@@ -40,7 +34,6 @@ class Mecanismo:
             if hash_bloco.startswith(prefixo):
                 self.bloco.nonce = nonce
                 self.bloco.hash_proprio = hash_bloco
-
                 self.minerador.blockchain.inserir(self.bloco)
 
                 return self.minerador
