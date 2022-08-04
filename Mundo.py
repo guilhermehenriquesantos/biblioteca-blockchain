@@ -35,14 +35,15 @@ class Mundo:
 
     '''
     * Nome: descobrir_poder_mundial
-    * Parâmetros: próprio mundo
-    * Objetivo: somar todo o poder computacional dos mineradores do mundo (rede).
+    * Parâmetros: próprio mundo, fator_balanceamento
+    * Objetivo: somar todo o poder computacional dos mineradores do mundo (rede) e multiplicar pelo fator de balanceamento que tem o intuito de trazer maior nivelamento entre os mineradores.
     *
     '''
-    def descobrir_poder_mundial(self):
+    def descobrir_poder_mundial(self, fator_balanceamento=10):
         for poder in self.mineradores.values():
             self.poder_mundial = self.poder_mundial + poder
 
+        self.poder_mundial = self.poder_mundial*fator_balanceamento
         return self
 
     '''
