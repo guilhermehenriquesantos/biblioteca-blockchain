@@ -26,7 +26,7 @@ def experimento(quantidade_blocos, poder_computacional):
         persistencia = Persiste('Experimento_2/')
 
         mundo = Mundo()
-        mundo.iniciar_processamento(30, quantidade_blocos, None, poder_computacional)
+        mundo.iniciar_processamento(50, quantidade_blocos, None, poder_computacional, True)
 
         for minerador in mundo.mineradores.keys():
             if (len(minerador.blockchain.livro_razao) >= quantidade_blocos):
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
         tempo_inicio = time.time()
 
-        experimento(10000, 100)
+        experimento(60000, 100)
 
         tempo_decorrido = (time.time() - tempo_inicio)
 

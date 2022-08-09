@@ -30,7 +30,6 @@ class Mundo:
             self.mineradores[novo_minerador] = novo_minerador.poder_computacional
 
         self.descobrir_poder_mundial()
-        self.definir_vizinhos_minerador(quantidade_vizinhos)
         return self
 
     '''
@@ -63,7 +62,7 @@ class Mundo:
             for i in range(0, quantidade_vizinhos):
                 vizinho_escolhido = random.choice(
                     list(self.mineradores.keys()))
-                while(vizinho_escolhido.identificador == minerador.identificador and vizinho_escolhido in minerador.vizinhos):
+                while(vizinho_escolhido.identificador == minerador.identificador or vizinho_escolhido in minerador.vizinhos):
                     vizinho_escolhido = random.choice(
                         list(self.mineradores.keys()))
 
@@ -89,9 +88,14 @@ class Mundo:
     * Objetivo: chamar os métodos necessários para criação dos mineradores que irão realizar processos de mineração e propagação até alcançarem a quantidade de blocos desejados. Após isso detectar quaisquer bifurcações na rede após minerações.
     *
     '''
-    def iniciar_processamento(self, quantidade_mineradores, quantidade_blocos_desejados, quantidade_vizinhos=None, poder_computacional=None):
+    def iniciar_processamento(self, quantidade_mineradores, quantidade_blocos_desejados, quantidade_vizinhos=None, poder_computacional=None, divisao_vizinhos=None):
         self.criar_mineradores(quantidade_mineradores,
                                poder_computacional, quantidade_vizinhos)
+
+        if (divisao_vizinhos == True):
+            self.dividir_vizinhos()
+        else:
+            self.definir_vizinhos_minerador(quantidade_vizinhos)
 
         pare = False
         while (not pare):
@@ -156,3 +160,24 @@ class Mundo:
         except Exception as error:
             print('Ocorreu um erro ao detectar as bifurcações: {}'.format(error))
             return self
+
+    def dividir_vizinhos(self):
+        for minerador in self.mineradores.keys():
+            if (minerador.identificador <= 25):
+                for i in range(0, 40):
+                    vizinho_escolhido = random.choice(list(self.mineradores.keys()))
+
+                    while(vizinho_escolhido.identificador == minerador.identificador or vizinho_escolhido in minerador.vizinhos):
+                        vizinho_escolhido = random.choice(list(self.mineradores.keys()))
+
+                    minerador.vizinhos.append(vizinho_escolhido)
+            else:
+                for i in range(0, 1):
+                    vizinho_escolhido = random.choice(list(self.mineradores.keys()))
+                    while(vizinho_escolhido.identificador == minerador.identificador or vizinho_escolhido in minerador.vizinhos):
+                        vizinho_escolhido = random.choice(
+                            list(self.mineradores.keys()))
+
+                    minerador.vizinhos.append(vizinho_escolhido)
+
+        return self
