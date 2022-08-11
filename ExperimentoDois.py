@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
         tempo_inicio = time.time()
 
-        experimento(60000, 100)
+        experimento(200000, 100)
 
         tempo_decorrido = (time.time() - tempo_inicio)
 
