@@ -27,6 +27,7 @@ class Mecanismo:
             informacoes_bloco = str(self.bloco.numero) + \
                 self.bloco.dados + \
                 self.bloco.hash_anterior + \
+                str(self.bloco.fraudado) + \
                 str(nonce)
 
             hash_bloco = sha256(informacoes_bloco.encode('ascii')).hexdigest()

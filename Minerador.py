@@ -6,9 +6,10 @@ from Mecanismo import Mecanismo
 
 
 class Minerador:
-    def __init__(self, identificador, mecanismo=None, poder_computacional=None, vizinhos=None, blockchain=None, propagar=False):
+    def __init__(self, identificador, mecanismo=None, poder_computacional=None, vizinhos=None, blockchain=None, propagar=False, fraudador=False):
         self.identificador = identificador
         self.propagar = propagar
+        self.fraudador = fraudador
 
         if (mecanismo != None):
             self.mecanismo = mecanismo
@@ -36,19 +37,23 @@ class Minerador:
         poder = '3- Poder computacional: '
         quantidade_vizinhos = '4- Quantidade de vizinhos: '
         tamanho_blockchain = '5- Tamanho da blockchain: '
+        fraudador = '6- Frauda blocos: '
 
-        return id + '{}\n'.format(self.identificador) + consenso + '\n' + poder + '{}\n'.format(self.poder_computacional) + quantidade_vizinhos + '{}\n'.format(len(self.vizinhos)) + tamanho_blockchain + '{}'.format(len(self.blockchain.livro_razao))
+        return id + '{}\n'.format(self.identificador) + consenso + '\n' + poder + '{}\n'.format(self.poder_computacional) + quantidade_vizinhos + '{}\n'.format(len(self.vizinhos)) + tamanho_blockchain + '{}\n'.format(len(self.blockchain.livro_razao)) + fraudador + '{}'.format(str(self.fraudador))
 
     '''
     * Nome: atualizar
     * Parâmetros: próprio minerador e blockchain_atualizada (objeto Blockchain)
-    * Objetivo: atualizar um minerador com uma blockchain mais atualizada do que a que ele possui e após essa atualização, informar a rede que ele está apto a propagar essa nova blockchain.
+    * Objetivo: atualizar um minerador com a blockchain honesta mais atualizada do que a que ele possui e após essa atualização, informar a rede caso ele esteja apto a propagar essa nova blockchain, ou seja, caso não tenha recebido uma blockchain fraudada ele compartilha com a rede.
     *
     '''
     def atualizar(self, blockchain_atualizada):
         try:
             self.blockchain.atualizar(blockchain_atualizada)
-            self.propagar = True
+            if (blockchain_atualizada.fraudada == True):
+                self.propagar = False
+            else:
+                self.propagar = True
 
             return self
         except Exception as error:
@@ -91,11 +96,15 @@ class Minerador:
     '''
     * Nome: tentar_mineracao
     * Parâmetros: próprio minerador e poder_mundial (poder computacional da rede)
-    * Objetivo: realizar uma espécie de loteria para escolha de um minerador e nessa loteria, quanto maior o poder computacional de um minerador, maior a chance que ele terá de minerar um novo bloco.
+    * Objetivo: realizar uma espécie de loteria para escolha de um minerador e nessa loteria, quanto maior o poder computacional de um minerador, maior a chance que ele terá de minerar um novo bloco. Se o minerador for do tipo fraudador ele irá minerar um bloco fraudado ao invés de um bloco honesto como os demais.
     *
     '''
     def tentar_mineracao(self, poder_mundial):
         if ((random.uniform(0, 1)) <= (self.poder_computacional)/poder_mundial):
             bloco = Bloco(self)
+
+            if (self.fraudador == True):
+                bloco.fraudado = True
+
             self.minerar(bloco)
             return self

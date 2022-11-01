@@ -14,11 +14,11 @@ class Mundo:
 
     '''
     * Nome: criar_mineradores
-    * Parâmetros: próprio mundo e quantidade_mineradores (quantidade desejada de mineradores)
+    * Parâmetros: próprio mundo, quantidade_mineradores (quantidade desejada de mineradores), poder_computacional (quantidade de poder computacional fixa), ataque_maioria (para simulação de ataques de 51%), dimensao_ataque (porcentagem do ataque, 51%, 30%, etc.) e quantidade_fraudadores (quantidades de mineradores que irão fraudar a blockchain em um ataque)
     * Objetivo: criar um dicionário de objetos mineradores de acordo com a quantidade informada no parâmetro do método, já definindo o poder mundial da rede e os vizinhos que cada minerador do dicionário terá.
     *
     '''
-    def criar_mineradores(self, quantidade_mineradores, poder_computacional, quantidade_vizinhos):
+    def criar_mineradores(self, quantidade_mineradores, poder_computacional, ataque_maioria, dimensao_ataque, quantidade_fraudadores):
         for identificador in range(1, quantidade_mineradores + 1):
             if (poder_computacional == None):
                 novo_minerador = Minerador(
@@ -29,12 +29,33 @@ class Mundo:
 
             self.mineradores[novo_minerador] = novo_minerador.poder_computacional
 
+        if (ataque_maioria == True):
+            fraudadores = {}
+            poder_fraudadores = 0
+
+            for i in range(0, quantidade_fraudadores):
+                fraudador = random.choice(list(self.mineradores.keys()))
+                while (fraudador.identificador in fraudadores):
+                    fraudador = random.choice(list(self.mineradores.keys()))
+
+                fraudadores[fraudador.identificador] = fraudador
+
+            for fraudador in fraudadores.values():
+                poder_fraudadores = poder_fraudadores + fraudador.poder_computacional
+
+            poder_mundial = (((self.descobrir_poder_mundial().poder_mundial)/10) - poder_fraudadores)
+
+            for fraudador in fraudadores.values():
+                fraudador.poder_computacional = int(((poder_mundial*(dimensao_ataque*quantidade_fraudadores)) / (1 - (dimensao_ataque*quantidade_fraudadores))) / quantidade_fraudadores) + 1
+                fraudador.fraudador = True
+                self.mineradores.update({fraudador:fraudador.poder_computacional})
+
         self.descobrir_poder_mundial()
         return self
 
     '''
     * Nome: descobrir_poder_mundial
-    * Parâmetros: próprio mundo, fator_balanceamento
+    * Parâmetros: próprio mundo e fator_balanceamento
     * Objetivo: somar todo o poder computacional dos mineradores do mundo (rede) e multiplicar pelo fator de balanceamento que tem o intuito de trazer maior nivelamento entre os mineradores.
     *
     '''
@@ -47,8 +68,8 @@ class Mundo:
 
     '''
     * Nome: definir_vizinhos_minerador
-    * Parâmetros: próprio mundo
-    * Objetivo: cada minerador terá uma quantidade de vizinhos entre um e o tamanho da rede de mineradores menos ele mesmo, então é escolhido um número aleatório de acordo com essa quantidade que representará quantos vizinhos o minerador terá. Após a escolha da quantidade, percorre-se o mundo de mineradores para definir quais os mineradores serão os vizinhos do minerador.
+    * Parâmetros: próprio mundo, quantidade_definida (quantidade de vizinhos definida para todos os mineradores)
+    * Objetivo: caso não seja definido um valor específico para a quantidade de vizinhos que cada minerador terá, a quantidade de vizinhos será definida de forma randomizada entre um e o tamanho da rede de mineradores menos ele mesmo. Após a escolha da quantidade, percorre-se o mundo de mineradores para definir quais os mineradores serão os vizinhos do minerador.
     *
     '''
     def definir_vizinhos_minerador(self, quantidade_definida):
@@ -84,13 +105,13 @@ class Mundo:
 
     '''
     * Nome: iniciar_processamento
-    * Parâmetros: próprio mundo, quantidade_mineradores (quantidade desejada de mineradores) e quantidade_blocos_desejados (tamanho da blockchain desejada para realizar o processo de mineração)
+    * Parâmetros: próprio mundo, quantidade_mineradores (quantidade desejada de mineradores), quantidade_blocos_desejados (tamanho da blockchain desejada para realizar o processo de mineração), quantidade_vizinhos (quantidade fixada para o número de vizinhos de cada minerador), poder_computacional (valor do poder computacional fixado para todos os mineradores), divisao_vizinhos (caso queira parte dos mineradores com uma definição da quantidade de vizinhos e outra parte com uma definição diferente), ataque_maioria (para possibilitar a ocorrência de ataques de 51%), dimensao_ataque (porcetagem do poder computacional que o minerador(es) terá(ão) para realizar o ataque) e quantidade_fraudadores (quantidade de mineradores que irão fraudar a blockchain em casos de ataque)
     * Objetivo: chamar os métodos necessários para criação dos mineradores que irão realizar processos de mineração e propagação até alcançarem a quantidade de blocos desejados. Após isso detectar quaisquer bifurcações na rede após minerações.
     *
     '''
-    def iniciar_processamento(self, quantidade_mineradores, quantidade_blocos_desejados, quantidade_vizinhos=None, poder_computacional=None, divisao_vizinhos=None):
+    def iniciar_processamento(self, quantidade_mineradores, quantidade_blocos_desejados, quantidade_vizinhos=None, poder_computacional=None, divisao_vizinhos=None, ataque_maioria=None, dimensao_ataque=None, quantidade_fraudadores=None):
         self.criar_mineradores(quantidade_mineradores,
-                               poder_computacional, quantidade_vizinhos)
+                               poder_computacional, ataque_maioria, dimensao_ataque, quantidade_fraudadores)
 
         if (divisao_vizinhos == True):
             self.dividir_vizinhos()
@@ -161,6 +182,13 @@ class Mundo:
             print('Ocorreu um erro ao detectar as bifurcações: {}'.format(error))
             return self
 
+
+    '''
+    * Nome: dividir_vizinhos
+    * Parâmetros: próprio mundo
+    * Objetivo: dividir a quantidade de vizinhos entre os mineradores fazendo que parte dos mineradores terão poucos vizinhos e a outra parte terá muitos vizinhos.
+    *
+    '''
     def dividir_vizinhos(self):
         for minerador in self.mineradores.keys():
             if (minerador.identificador <= 25):

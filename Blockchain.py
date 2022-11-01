@@ -1,5 +1,5 @@
 class Blockchain:
-    def __init__(self, representante, livro_razao=None, topo=None, historico_mineradores=None):
+    def __init__(self, representante, livro_razao=None, topo=None, historico_mineradores=None, fraudada=False):
         self.representante = representante
 
         if (livro_razao != None):
@@ -15,20 +15,23 @@ class Blockchain:
         else:
             self.historico_mineradores = {}
 
+        self.fraudada = fraudada
+
     def __str__(self):
         return 'Minerador detentor da blockchain: {}\n'.format(self.representante.identificador)
 
     '''
     * Nome: atualizar
     * Parâmetros: própria blockchain e blockchain_atualizada (blockchain com os novos dados a serem inseridos)
-    * Objetivo: verificar os dados faltantes em uma blockchain e completar com os dados da blockchain mais atualizada.
+    * Objetivo: verificar os dados faltantes em uma blockchain honesta e completar com os dados da blockchain mais atualizada.
     *
     '''
     def atualizar(self, blockchain_atualizada):
         try:
-            self.livro_razao = blockchain_atualizada.livro_razao.copy()
-            self.historico_mineradores = blockchain_atualizada.historico_mineradores.copy()
-            self.topo = self.livro_razao.get(max(self.livro_razao))
+            if (blockchain_atualizada.fraudada == False):
+                self.livro_razao = blockchain_atualizada.livro_razao.copy()
+                self.historico_mineradores = blockchain_atualizada.historico_mineradores.copy()
+                self.topo = self.livro_razao.get(max(self.livro_razao))
 
             return self
         except Exception as error:
@@ -37,14 +40,17 @@ class Blockchain:
 
     '''
     * Nome: inserir
-    * Parâmetros: bloco
-    * Objetivo: inserir um novo bloco no livro razão da blockchain, atualizar o último bloco do topo da blockchain e atualizar o histórico de mineradores com o hash do bloco minerado e o minerador representante desse bloco.
+    * Parâmetros: própria blockchain e bloco
+    * Objetivo: inserir um novo bloco no livro razão da blockchain, atualizar o último bloco do topo da blockchain, atualizar o histórico de mineradores com o hash do bloco minerado e o minerador representante desse bloco, por fim, se o bloco a ser inserido foi fraudado, sinalizar a blockchain como fraudada.
     *
     '''
     def inserir(self, bloco):
         self.livro_razao[bloco.numero] = bloco
         self.topo = bloco
         self.historico_mineradores[bloco.hash_proprio] = self.representante
+
+        if (bloco.fraudado == True):
+            self.fraudada = True
 
         return self
 
