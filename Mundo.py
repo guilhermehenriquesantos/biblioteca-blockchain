@@ -1,5 +1,6 @@
 import random
 
+from Blockchain import Blockchain
 from Minerador import Minerador
 
 
@@ -110,13 +111,18 @@ class Mundo:
     *
     '''
     def iniciar_processamento(self, quantidade_mineradores, quantidade_blocos_desejados, quantidade_vizinhos=None, poder_computacional=None, divisao_vizinhos=None, ataque_maioria=None, dimensao_ataque=None, quantidade_fraudadores=None):
-        self.criar_mineradores(quantidade_mineradores,
-                               poder_computacional, ataque_maioria, dimensao_ataque, quantidade_fraudadores)
-
-        if (divisao_vizinhos == True):
-            self.dividir_vizinhos()
+        if (self.mineradores != {}):
+            for minerador in self.mineradores.keys():
+                minerador.blockchain = None
+                minerador.blockchain = Blockchain(minerador)
         else:
-            self.definir_vizinhos_minerador(quantidade_vizinhos)
+            self.criar_mineradores(quantidade_mineradores,
+                                   poder_computacional, ataque_maioria, dimensao_ataque, quantidade_fraudadores)
+
+            if (divisao_vizinhos == True):
+                self.dividir_vizinhos()
+            else:
+                self.definir_vizinhos_minerador(quantidade_vizinhos)
 
         pare = False
         while (not pare):

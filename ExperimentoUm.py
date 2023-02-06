@@ -23,20 +23,21 @@ def limpar_tela():
 '''
 def experimento(quantidade_blocos, quantidade_vizinhos):
     try:
-        persistencia = Persiste('Experimento_1/')
-
         mundo = Mundo()
-        mundo.iniciar_processamento(30, quantidade_blocos, quantidade_vizinhos)
+        for execucoes in range(1, 31):
+            persistencia = Persiste('Experimento_1/'+str(execucoes)+'/')
 
-        for minerador in mundo.mineradores.keys():
-            if (len(minerador.blockchain.livro_razao) >= quantidade_blocos):
-                blockchain = minerador.blockchain
+            mundo.iniciar_processamento(30, quantidade_blocos, quantidade_vizinhos)
 
-        mundo.ordenar_poder()
-        persistencia.persistir_mineradores(mundo.mineradores, blockchain)
-        persistencia.persistir_blockchain(blockchain)
-        persistencia.persistir_historico(blockchain)
-        persistencia.persistir_bifurcacoes(mundo)
+            for minerador in mundo.mineradores.keys():
+                if (len(minerador.blockchain.livro_razao) >= quantidade_blocos):
+                    blockchain = minerador.blockchain
+
+            mundo.ordenar_poder()
+            persistencia.persistir_mineradores(mundo.mineradores, blockchain)
+            persistencia.persistir_blockchain(blockchain)
+            persistencia.persistir_historico(blockchain)
+            persistencia.persistir_bifurcacoes(mundo)
 
     except Exception as error:
         print('Ocorreu o erro: {}'.format(error))
